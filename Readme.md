@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
-* Студент: [Екатерина Рыбина](https://up.htmlacademy.ru/ecmascript-individual/2/user/26126).
-* Наставник: `Неизвестно`.
+- Студент: [Екатерина Рыбина](https://up.htmlacademy.ru/ecmascript-individual/2/user/26126).
+- Наставник: Роман Марченко.
 
 ---
 
