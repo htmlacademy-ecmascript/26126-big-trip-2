@@ -169,6 +169,6 @@ export default class EditPointFormView {
   }
 
   removeElement() {
-    this.element =  null;
+    this.element = null;
   }
 }

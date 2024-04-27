@@ -176,6 +176,6 @@ export default class NewPointFormView {
   }
 
   removeElement() {
-    this.element =  null;
+    this.element = null;
   }
 }

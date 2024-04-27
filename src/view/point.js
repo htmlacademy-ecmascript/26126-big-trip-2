@@ -53,6 +53,6 @@ export default class PointView {
   }
 
   removeElement() {
-    this.element =  null;
+    this.element = null;
   }
 }
