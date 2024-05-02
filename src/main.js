@@ -1,11 +1,11 @@
 import TripPresenter from './presenter/trip-presenter.js';
+import PointsModel from './model/points-model.js';
 
-const siteHeaderElement = document.querySelector('.page-header');
-const tripMainElement = siteHeaderElement.querySelector('.trip-main');
-const siteFiltersElement = tripMainElement.querySelector('.trip-controls__filters');
+const tripMainElement = document.querySelector('.trip-main');
 const siteMainElement = document.querySelector('.page-main');
-const tripEventsElement = siteMainElement.querySelector('.trip-events');
 
-const tripPresenter = new TripPresenter({main: siteMainElement},{filterContainer: siteFiltersElement},{tripEventsContainer: tripEventsElement});
+const pointsModel = new PointsModel();
+
+const tripPresenter = new TripPresenter({main: siteMainElement, pointsModel, tripMain: tripMainElement});
 
 tripPresenter.init();
