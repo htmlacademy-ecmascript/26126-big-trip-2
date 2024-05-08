@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {DATE_FORMAT_EVENT,TIME_FORMAT} from '../const.js';
 import {getEventDuration, changeDateFormat, getPointTypeOffer,getDestinationById} from '../util.js';
 
@@ -53,25 +53,30 @@ function createPointTemplate(point, dataOffers, dataDestinations) {
 </li>`);
 }
 
-export default class PointView {
-  constructor({point, dataOffers, dataDestinations}) {
-    this.point = point;
-    this.dataOffers = dataOffers;
-    this.dataDestinations = dataDestinations;
+export default class PointView extends AbstractView{
+  #point = null;
+  #dataOffers = null;
+  #dataDestinations = null;
+  #handleEditArrowClick = null;
+  constructor({point, dataOffers, dataDestinations, onEditArrowClick}) {
+    super();
+    this.#point = point;
+    this.#dataOffers = dataOffers;
+    this.#dataDestinations = dataDestinations;
+
+    this.#handleEditArrowClick = onEditArrowClick;
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#editArrowClick);
   }
 
-  getTemplate() {
-    return createPointTemplate(this.point, this.dataOffers, this.dataDestinations);
+  get template() {
+    return createPointTemplate(this.#point, this.#dataOffers, this.#dataDestinations);
   }
 
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
+  #editArrowClick = (evt) => {
+    evt.preventDefault();
+    this.#handleEditArrowClick();
+  };
 
-  removeElement() {
-    this.element = null;
-  }
 }
