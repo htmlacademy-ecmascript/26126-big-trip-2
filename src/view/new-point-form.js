@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {changeDateFormat, getPointTypeOffer,getDestinationById} from '../util.js';
 import {DATE_FORMAT_EVENT_START} from '../const.js';
 
@@ -144,25 +144,19 @@ function createNewPointFormTemplate(point, dataOffers, dataDestinations) {
 </form>`);
 }
 
-export default class NewPointFormView {
+export default class NewPointFormView extends AbstractView{
+  #point = null;
+  #dataOffers;
+  #dataDestinations;
+
   constructor({point, dataOffers, dataDestinations}) {
-    this.point = point;
-    this.dataOffers = dataOffers;
-    this.dataDestinations = dataDestinations;
+    super();
+    this.#point = point;
+    this.#dataOffers = dataOffers;
+    this.#dataDestinations = dataDestinations;
   }
 
-  getTemplate() {
-    return createNewPointFormTemplate(this.point, this.dataOffers, this.dataDestinations);
-  }
-
-  getElement() {
-    if(!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
+  get template() {
+    return createNewPointFormTemplate(this.#point, this.#dataOffers, this.#dataDestinations);
   }
 }
