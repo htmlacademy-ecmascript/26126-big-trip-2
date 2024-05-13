@@ -1,4 +1,4 @@
-import {getRandomIntInclusive, getRandomArrayElement} from '../util.js';
+import {getRandomIntInclusive} from '../utils/common.js';
 
 
 const mockPoints = [
@@ -65,7 +65,4 @@ const mockPoints = [
 
 ];
 
-function getRandomPoint() {
-  return getRandomArrayElement(mockPoints);
-}
-export {getRandomPoint};
+export{mockPoints};
