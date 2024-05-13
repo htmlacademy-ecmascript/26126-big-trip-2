@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {DATE_FORMAT_EVENT,TIME_FORMAT} from '../const.js';
-import {getEventDuration, changeDateFormat, getPointTypeOffer,getDestinationById} from '../util.js';
+import {getEventDuration, changeDateFormat, getPointTypeOffer,getDestinationById} from '../utils/point.js';
 
 function createPointTemplate(point, dataOffers, dataDestinations) {
   const {type,basePrice,dateFrom, dateTo, isFavorite, offers} = point;
