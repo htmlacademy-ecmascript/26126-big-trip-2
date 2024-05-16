@@ -1,12 +1,12 @@
-import EditPointFormView from '../view/edit-point-form.js';
-//import NewPointFormView from '../view/new-point-form.js';
+import {render} from '../framework/render.js';
+import {updateItem} from '../utils/common.js';
+import {generateFilter} from '../utils/filterObject.js';
 import FilterView from '../view/filters.js';
-import PointView from '../view/point.js';
 import SortView from '../view/sort.js';
 import PointListView from '../view/point-list.js';
-import EamptyListView from '../view/no-point.js';
-import {render, replace} from '../framework/render.js';
-import {generateFilter} from '../mock/filter.js';
+import EmptyListView from '../view/no-point.js';
+
+import PointPresenter from './point-presenter.js';
 
 export default class TripPresenter {
   #pointsModel = null;
@@ -16,9 +16,14 @@ export default class TripPresenter {
   #tripEventsContainer = null;
   #pointListComponent = new PointListView();
 
+  #sortComponent = new SortView();
+  #emptyListComponent = new EmptyListView();
+
   #mainPoints = [];
   #offers = [];
   #destinations = [];
+
+  #pointPresenters = new Map();
 
   constructor({main, pointsModel, tripMain}) {
     this.#main = main;
@@ -37,64 +42,50 @@ export default class TripPresenter {
   }
 
   #renderPoint(point, dataOffers, dataDestinations) {
-
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceEditPointToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-
-    const pointComponent = new PointView({point,
-      dataOffers,
-      dataDestinations,
-      onEditArrowClick: () => {
-        replacePointToEditPoint();
-        document.addEventListener('keydown', escKeyDownHandler);
-      }
+    const pointPresenter = new PointPresenter({
+      pointListContainer: this.#pointListComponent.element,
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange
     });
-    /*const pointNewComponent = new NewPointFormView({point,
-      dataOffers,
-      dataDestinations});*/
-
-    const editPointComponent = new EditPointFormView({point,
-      dataOffers,
-      dataDestinations,
-      onEditFormSubmit: () => {
-        replaceEditPointToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      },
-      onEditFormButtonClick: () => {
-        replaceEditPointToPoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    });
-
-    function replacePointToEditPoint(){
-      replace(editPointComponent, pointComponent);
-    }
-
-    function replaceEditPointToPoint(){
-      replace(pointComponent, editPointComponent);
-    }
-
-    render(pointComponent, this.#pointListComponent.element);
-    //render(pointNewComponent, this.#pointListComponent.element);
+    pointPresenter.init(point, dataOffers, dataDestinations);
+    this.#pointPresenters.set(point.id, pointPresenter);
   }
+
+  #renderPoints(from, to) {
+    this.#mainPoints
+      .slice(from, to)
+      .forEach((point)=> this.#renderPoint(point, this.#offers, this.#destinations));
+  }
+
+  #renderEmptyList (){
+    render(this.#emptyListComponent, this.#tripEventsContainer);
+  }
+
+  #clearPointList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+  }
+
+  #handleModeChange = () => {
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
+  #handlePointChange = (updatedPoint) => {
+    this.#mainPoints = updateItem(this.#mainPoints, updatedPoint);
+    this.#pointPresenters.get(updatedPoint.id).init(updatedPoint, this.#offers, this.#destinations);
+  };
 
   #renderPointList() {
     const filters = generateFilter(this.#mainPoints);
     render(new FilterView({filters}), this.#filterContainer);
 
-    render(new SortView(), this.#tripEventsContainer);
+    render(this.#sortComponent, this.#tripEventsContainer);
     render(this.#pointListComponent, this.#tripEventsContainer);
-    if(this.#mainPoints.length === 0) {
-      render(new EamptyListView(), this.#tripEventsContainer);
-    }
 
-    for (let i = 0; i < this.#mainPoints.length; i++) {
-      this.#renderPoint(this.#mainPoints[i], this.#offers, this.#destinations);
+    if(this.#mainPoints.length === 0) {
+      this.#renderEmptyList();
+      return;
     }
+    this.#renderPoints(0, this.#mainPoints.length);
   }
 }

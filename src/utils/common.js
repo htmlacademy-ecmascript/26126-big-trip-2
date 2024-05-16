@@ -9,7 +9,10 @@ function getRandomIntInclusive(min, max) {
   // Максимум и минимум включаются
 }
 
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
 
-export {getRandomArrayElement, getRandomIntInclusive};
+export {getRandomArrayElement, getRandomIntInclusive, updateItem};
 
 

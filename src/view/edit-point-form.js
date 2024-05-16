@@ -1,28 +1,20 @@
 import PointFormView from '../view/point-form.js';
 
 export default class EditPointFormView extends PointFormView{
-  #handleEditFormSubmit = null;
-  #handleEditFormButtonClick = null;
+  _handleEditFormButtonClick = null;
 
-  constructor({point, dataOffers, dataDestinations, onEditFormSubmit, onEditFormButtonClick}) {
-    super({point, dataOffers, dataDestinations});
 
-    this.#handleEditFormSubmit = onEditFormSubmit;
-    this.#handleEditFormButtonClick = onEditFormButtonClick;
+  constructor({point, dataDestinations, buttonText, createRollUp, createOffersTemplate, createDestinationTemplate, onEditFormSubmit, onEditFormButtonClick}) {
+    super({point, dataDestinations, buttonText, createRollUp, createOffersTemplate, createDestinationTemplate, onEditFormSubmit});
 
-    this.element.addEventListener('submit', this.#editFormSubmitHandler);
+    this._handleEditFormButtonClick = onEditFormButtonClick;
 
     this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#editFormButtonHandler);
+      .addEventListener('click', this._editFormButtonHandler);
   }
 
-  #editFormSubmitHandler = (evt) => {
+  _editFormButtonHandler = (evt) => {
     evt.preventDefault();
-    this.#handleEditFormSubmit();
-  };
-
-  #editFormButtonHandler = (evt) => {
-    evt.preventDefault();
-    this.#handleEditFormButtonClick();
+    this._handleEditFormButtonClick();
   };
 }
