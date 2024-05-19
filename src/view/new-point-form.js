@@ -1,8 +1,8 @@
 import PointFormView from '../view/point-form.js';
-import {CANCEL} from '../const.js';
-import {createEditPointFormTemplate} from '../view/point-form.js';
+import {getPointTypeOffer, getDestinationById} from '../utils/point.js';
 
-function createOffersSelectorTemplate(pointTypeOffer) {
+function createOffersTemplateForNewPoint(dataOffers, point) {
+  const pointTypeOffer = getPointTypeOffer(dataOffers, point);
   return (
     pointTypeOffer.offers.length !== 0 ?
       `<section class="event__section  event__section--offers">
@@ -23,7 +23,8 @@ function createOffersSelectorTemplate(pointTypeOffer) {
   );
 }
 
-function createDestinationSelectorTemplate(destinationById) {
+function createDestinationTemplateForNewPoint(dataDestinations, point) {
+  const destinationById = getDestinationById(dataDestinations, point);
   return (
     destinationById.description || destinationById.pictures ?
       `<section class="event__section  event__section--destination">
@@ -38,12 +39,9 @@ function createDestinationSelectorTemplate(destinationById) {
   </section>` : ''
   );
 }
-export default class NewPointFormView extends PointFormView{
-  constructor({point, dataOffers, dataDestinations}) {
-    super({point, dataOffers, dataDestinations});
-  }
 
-  get template() {
-    return createEditPointFormTemplate(this._point, this._dataOffers, this._dataDestinations,createOffersSelectorTemplate,createDestinationSelectorTemplate, CANCEL);
-  }
+export default class NewPointFormView extends PointFormView{
+
+
 }
+export{createOffersTemplateForNewPoint, createDestinationTemplateForNewPoint};

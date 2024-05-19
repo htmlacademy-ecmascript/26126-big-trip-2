@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {DATE_FORMAT_EVENT_START, TYPES, DELETE, CITIES} from '../const.js';
+import {DATE_FORMAT_EVENT_START, TYPES, CITIES} from '../const.js';
 import {changeDateFormat, getPointTypeOffer,getDestinationById} from '../utils/point.js';
 
 function createTypeItemTemplate(type) {
@@ -11,7 +11,9 @@ function createTypeItemTemplate(type) {
   `);
 }
 
-function createOffersSelectorTemplate(pointTypeOffer, offers) {
+function createOffersSelectorTemplate(dataOffers, point) {
+  const {offers} = point;
+  const pointTypeOffer = getPointTypeOffer(dataOffers, point);
   return (
     pointTypeOffer.offers.length !== 0 ?
       `<section class="event__section  event__section--offers">
@@ -36,7 +38,8 @@ function createOffersSelectorTemplate(pointTypeOffer, offers) {
   );
 }
 
-function createDestinationSelectorTemplate(destinationById) {
+function createDestinationSelectorTemplate(dataDestinations, point) {
+  const destinationById = getDestinationById(dataDestinations, point);
   return (
     destinationById.description || destinationById.pictures ?
       `<section class="event__section  event__section--destination">
@@ -46,11 +49,17 @@ function createDestinationSelectorTemplate(destinationById) {
   );
 }
 
+function createRollUpTemplate () {
+  return(
+    `<button class="event__rollup-btn" type="button">
+    <span class="visually-hidden">Open event</span>
+  </button>`
+  );
+}
 
-export function createEditPointFormTemplate(point, dataOffers, dataDestinations, createOffersSelector, createDestinationSelector, buttonText) {
-  const {type,basePrice,dateFrom, dateTo, offers} = point;
+function createEditPointFormTemplate(point, dataDestinations, buttonText, createRollUp, createOffersTemplate, createDestinationTemplate) {
+  const {type,basePrice,dateFrom, dateTo} = point;
   const destinationById = getDestinationById(dataDestinations, point);
-  const pointTypeOffer = getPointTypeOffer(dataOffers, point);
 
   return (`<form class="event event--edit" action="#" method="post">
   <header class="event__header">
@@ -97,30 +106,48 @@ export function createEditPointFormTemplate(point, dataOffers, dataDestinations,
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
     <button class="event__reset-btn" type="reset">${buttonText}</button>
-    <button class="event__rollup-btn" type="button">
-      <span class="visually-hidden">Open event</span>
-    </button>
+    ${createRollUp}
   </header>
   <section class="event__details">
-  ${createOffersSelector(pointTypeOffer,offers)}
-  ${createDestinationSelector(destinationById)}
+  ${createOffersTemplate}
+  ${createDestinationTemplate}
   </section>
 </form>`);
 }
 
 export default class PointFormView extends AbstractView{
   _point = null;
-  _dataOffers = null;
+  //_dataOffers = null;
   _dataDestinations = null;
-
-  constructor({point, dataOffers, dataDestinations}) {
+  _handleEditFormSubmit = null;
+  _buttonText = null;
+  createRollUp = null;
+  createOffersTemplate = null;
+  createDestinationTemplate = null;
+  constructor({point, dataDestinations, buttonText, createRollUp, createOffersTemplate, createDestinationTemplate, onEditFormSubmit}) {
     super();
     this._point = point;
-    this._dataOffers = dataOffers;
+    //this._dataOffers = dataOffers;
     this._dataDestinations = dataDestinations;
+    this.createOffersTemplate = createOffersTemplate;
+    this.createDestinationTemplate = createDestinationTemplate;
+    this._buttonText = buttonText;
+    this.createRollUp = createRollUp;
+
+    this._handleEditFormSubmit = onEditFormSubmit;
+    this.element.addEventListener('submit', this._editFormSubmitHandler);
   }
 
+  _editFormSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._handleEditFormSubmit();
+  };
+
+
   get template() {
-    return createEditPointFormTemplate(this._point, this._dataOffers, this._dataDestinations, createOffersSelectorTemplate, createDestinationSelectorTemplate,DELETE);
+    return createEditPointFormTemplate(this._point, this._dataDestinations, this._buttonText, this.createRollUp, this.createOffersTemplate, this.createDestinationTemplate);
+
   }
 }
+
+export {createRollUpTemplate, createOffersSelectorTemplate, createDestinationSelectorTemplate};
