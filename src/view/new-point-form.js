@@ -40,7 +40,7 @@ function createDestinationTemplateForNewPoint(dataDestinations, point) {
   );
 }
 
-export default class NewPointFormView extends PointFormView{
+export default class addPointFormView extends PointFormView{
 
 
 }

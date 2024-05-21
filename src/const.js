@@ -9,10 +9,19 @@ const FilterType = {
   PAST: 'past',
 };
 
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS:'offers',
+};
+
 const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const SORTS = ['day', 'event', 'time', 'price', 'offers'];
+const SORTS = Object.values(SortType);
 const CITIES = ['Amsterdam', 'Geneva', 'Chamonix'];
 
 const CANCEL = 'Cancel';
 const DELETE = 'Delete';
-export {DATE_FORMAT_EVENT, TIME_FORMAT, DATE_FORMAT_EVENT_START, FilterType, TYPES, SORTS, CITIES, CANCEL, DELETE};
+
+export {DATE_FORMAT_EVENT, TIME_FORMAT, DATE_FORMAT_EVENT_START, FilterType, TYPES, CITIES, CANCEL, DELETE, SortType, SORTS};
