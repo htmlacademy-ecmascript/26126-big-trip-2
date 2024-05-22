@@ -1,7 +1,7 @@
-import {render, remove} from '../framework/render.js';
+import {render} from '../framework/render.js';
 import {updateItem} from '../utils/common.js';
 
-import {sortPointTime, sortPointPrice} from '../utils/point.js';
+import {sortPointTime, sortPointPrice, sortPointDay} from '../utils/point.js';
 import {SortType} from '../const.js';
 
 import {generateFilter} from '../utils/filterObject.js';
@@ -42,12 +42,14 @@ export default class TripPresenter {
   }
 
   init () {
-    this.#mainPoints = [...this.#pointsModel.points];
+    this.#mainPoints = [...this.#pointsModel.points].sort(sortPointDay);
     this.#offers = [...this.#pointsModel.offers];
     this.#destinations = [...this.#pointsModel.destinations];
 
-    this.#sourcedMainPoints = [...this.#pointsModel.points];
+    this.#sourcedMainPoints = [...this.#pointsModel.points].sort(sortPointDay);
 
+    this.#renderFilter();
+    this.#renderSort();
     this.#renderPointList();
   }
 
@@ -74,8 +76,6 @@ export default class TripPresenter {
   #clearPointList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
-    remove(this.#sortComponent);
-    remove(this.#filterComponent);
   }
 
   #handleModeChange = () => {
@@ -90,9 +90,6 @@ export default class TripPresenter {
   };
 
   #sortPoints(sortType) {
-    // 2. Этот исходный массив задач необходим,
-    // потому что для сортировки мы будем мутировать
-    // массив в свойстве _boardTasks
     switch (sortType) {
       case SortType.TIME:
         this.#mainPoints.sort(sortPointTime);
@@ -101,8 +98,6 @@ export default class TripPresenter {
         this.#mainPoints.sort(sortPointPrice);
         break;
       case SortType.DAY:
-        // 3. А когда пользователь захочет "вернуть всё, как было",
-        // мы просто запишем в _boardTasks исходный массив
         this.#mainPoints = [...this.#sourcedMainPoints];
     }
 
@@ -131,8 +126,6 @@ export default class TripPresenter {
   }
 
   #renderPointList() {
-    this.#renderFilter();
-    this.#renderSort();
     render(this.#pointListComponent, this.#tripEventsContainer);
 
     if(this.#mainPoints.length === 0) {

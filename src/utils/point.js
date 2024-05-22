@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
+// eslint-disable-next-line no-undef
 const isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
 dayjs.extend(isSameOrBefore);
 
+// eslint-disable-next-line no-undef
 const isSameOrAfter = require('dayjs/plugin/isSameOrAfter');
 dayjs.extend(isSameOrAfter);
 
@@ -53,8 +55,12 @@ function sortPointTime(pointA, pointB) {
   return durationInHoursB - durationInHoursA;
 }
 
+function sortPointDay(pointA, pointB) {
+  return dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
+}
+
 function sortPointPrice(pointA, pointB) {
   return pointB.basePrice - pointA.basePrice;
 }
 
-export {isPointInPast, isPointInPresent, isPointInFuture, getPointTypeOffer,getDestinationById, changeDateFormat, getEventDuration, sortPointTime,sortPointPrice};
+export {isPointInPast, isPointInPresent, isPointInFuture, getPointTypeOffer,getDestinationById, changeDateFormat, getEventDuration, sortPointTime,sortPointPrice, sortPointDay};

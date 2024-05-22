@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {SortType, SORTS} from '../const.js';
+import {SORTS} from '../const.js';
 
 function createSortItemTemplate(sortType) {
 
@@ -36,10 +36,7 @@ export default class SortView extends AbstractView{
   }
 
   #sortTypeClickHandler = (evt) => {
-    if (evt.target.tagName !== 'INPUT') {
-      return;
-    }
-    evt.preventDefault();
+    //evt.preventDefault();
     this.#handleSortTypeChange(evt.target.dataset.sortType);
   };
 }
