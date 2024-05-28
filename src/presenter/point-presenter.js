@@ -65,10 +65,11 @@ export default class PointPresenter {
     this.#editPointComponent = new EditPointFormView({
       point: this.#point,
       dataDestinations: this.#dataDestinations,
+      dataOffers: this.#dataOffers,
       buttonText: DELETE,
       createRollUp: createRollUpTemplate(),
-      createOffersTemplate: createOffersSelectorTemplate(this.#dataOffers, this.#point),
-      createDestinationTemplate: createDestinationSelectorTemplate(this.#dataDestinations, this.#point),
+      //createOffersTemplate: createOffersSelectorTemplate(dataOffers, this.#point),
+      //createDestinationTemplate: createDestinationSelectorTemplate(this.#dataDestinations, this.#point),
 
       onEditFormSubmit: this.#handleFormSubmit,
       onEditFormButtonClick: this.#handleEditClick
@@ -98,6 +99,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#editPointComponent.reset(this.#point);
       this.#replaceEditFormToPoint();
     }
   }
@@ -105,6 +107,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#editPointComponent.reset(this.#point);
       this.#replaceEditFormToPoint();
     }
   };

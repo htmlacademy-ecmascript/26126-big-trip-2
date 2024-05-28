@@ -24,4 +24,5 @@ const CITIES = ['Amsterdam', 'Geneva', 'Chamonix'];
 const CANCEL = 'Cancel';
 const DELETE = 'Delete';
 
+
 export {DATE_FORMAT_EVENT, TIME_FORMAT, DATE_FORMAT_EVENT_START, FilterType, TYPES, CITIES, CANCEL, DELETE, SortType, SORTS};

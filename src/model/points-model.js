@@ -2,11 +2,15 @@ import {getRandomArrayElement} from '../utils/common.js';
 import {offers} from '../mock/offers.js';
 import {mockPoints} from '../mock/point.js';
 import {destinations} from '../mock/destinations.js';
+import {nanoid} from 'nanoid';
 
 const POINT_COUNT = 3;
 
 function getRandomPoint() {
-  return getRandomArrayElement(mockPoints);
+  return {
+    id: nanoid(),
+    ...getRandomArrayElement(mockPoints)
+  };
 }
 
 export default class PointsModel {

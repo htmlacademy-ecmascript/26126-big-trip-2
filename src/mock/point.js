@@ -3,7 +3,6 @@ import {getRandomIntInclusive} from '../utils/common.js';
 
 const mockPoints = [
   {
-    id: 'f4b62099-293f-4c3d-a702-94eec4a2808c1',
     basePrice:  getRandomIntInclusive(100, 1000),
     dateFrom: '2019-07-10T22:55:56.845Z',
     dateTo: '2019-07-11T11:22:13.375Z',
@@ -16,7 +15,6 @@ const mockPoints = [
     type: 'taxi'
   },
   {
-    id: 'f4b62099-293f-4c3d-a702-94eec4a2808c2',
     basePrice: getRandomIntInclusive(100, 1000),
     dateFrom: '2019-07-09T11:22:56.845Z',
     dateTo: '2019-07-09T12:22:13.375Z',
@@ -28,7 +26,6 @@ const mockPoints = [
     type: 'bus'
   },
   {
-    id: 'f4b62099-293f-4c3d-a702-94eec4a2808c3',
     basePrice: getRandomIntInclusive(100, 1000),
     dateFrom: '2019-07-10T08:00:56.845Z',
     dateTo: '2019-07-10T08:22:13.375Z',
@@ -40,7 +37,6 @@ const mockPoints = [
     type: 'train'
   },
   {
-    id: 'f4b62099-293f-4c3d-a702-94eec4a2808c4',
     basePrice: getRandomIntInclusive(100, 1000),
     dateFrom: '2019-07-06T22:55:56.845Z',
     dateTo: '2019-07-07T11:22:13.375Z',
@@ -53,7 +49,6 @@ const mockPoints = [
     type: 'flight'
   },
   {
-    id: 'f4b62099-293f-4c3d-a702-94eec4a2808c5',
     basePrice: getRandomIntInclusive(100, 1000),
     dateFrom: '2019-07-10T22:55:56.845Z',
     dateTo: '2019-07-11T11:22:13.375Z',
