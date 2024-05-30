@@ -1,12 +1,16 @@
 import PointFormView from '../view/point-form.js';
 import {getDestinationByTargetName} from '../utils/point.js';
 
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+
 export default class EditPointFormView extends PointFormView{
   _handleEditFormButtonClick = null;
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
-
-  constructor({point, dataDestinations, dataOffers, buttonText, createRollUp, /*createOffersTemplate, createDestinationTemplate,*/ onEditFormSubmit, onEditFormButtonClick}) {
-    super({point, dataDestinations, dataOffers, buttonText, createRollUp, /*createOffersTemplate, createDestinationTemplate,*/ onEditFormSubmit});
+  constructor({point, dataDestinations, dataOffers, buttonText, isAddPoint, createRollUp, onEditFormSubmit, onEditFormButtonClick}) {
+    super({point, dataDestinations, dataOffers,isAddPoint, buttonText, createRollUp, onEditFormSubmit});
 
     this._setState(EditPointFormView.parsePointToState(point));
 
@@ -32,6 +36,10 @@ export default class EditPointFormView extends PointFormView{
 
     this.element.querySelector('.event__input--destination')
       .addEventListener('change',this.#pointDestinationInputHandler);
+    this.element.querySelector('.event__input--price')
+      .addEventListener('change',this.#pointPriceInputHandler);
+
+    this.#setDatepicker();
   }
 
   #pointTypeInputHandler = (evt) => {
@@ -58,6 +66,60 @@ export default class EditPointFormView extends PointFormView{
     });
 
   };
+
+  #pointPriceInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      basePrice: evt.target.value
+    });
+  };
+
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
+  }
+
+  #dateChangeHandler = ([userDateFrom]) => {
+    this.updateElement({
+      dateFrom: userDateFrom,
+      dateTo: userDateFrom,
+    });
+  };
+
+  #dateToChangeHandler = ([userTo]) => {
+    this.updateElement({
+      dateTo: userTo,
+    });
+  };
+
+  #setDatepicker() {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        dateFormat: 'j/m/y H:S',
+        defaultDate: this._state.dateFrom,
+        //minDate: 'today',
+        onChange: this.#dateChangeHandler,
+      },
+    );
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector('[name="event-end-time"]'),
+      {
+        dateFormat: 'j/m/y H:S',
+        defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
+        onChange: this.#dateToChangeHandler,
+      },
+    );
+  }
 
   _editFormButtonHandler = (evt) => {
     evt.preventDefault();

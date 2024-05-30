@@ -3,11 +3,11 @@ import {render, replace, remove} from '../framework/render.js';
 import PointView from '../view/point.js';
 import EditPointFormView from '../view/edit-point-form.js';
 
-import {createRollUpTemplate, createOffersSelectorTemplate, createDestinationSelectorTemplate} from '../view/point-form.js';
+import {createRollUpTemplate} from '../view/point-form.js';
 import {DELETE, CANCEL} from '../const.js';
 
 import addPointFormView from '../view/new-point-form.js';
-import {createOffersTemplateForNewPoint, createDestinationTemplateForNewPoint} from '../view/new-point-form.js';
+
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -46,7 +46,7 @@ export default class PointPresenter {
       point: this.#point,
       dataOffers: this.#dataOffers,
       dataDestinations: this.#dataDestinations,
-
+      isAddPoint: false,
       onEditArrowClick: this.#handlePointArrowClick,
       onFavoriteClick: this.#handleFavoriteClick,
     });
@@ -57,8 +57,7 @@ export default class PointPresenter {
       dataDestinations: this.#dataDestinations,
       buttonText: CANCEL,
       createRollUp: '',
-      createOffersTemplate: createOffersTemplateForNewPoint(dataOffers, point),
-      createDestinationTemplate: createDestinationTemplateForNewPoint(dataDestinations, point),
+      isAddPoint: true,
       onEditFormSubmit: this.#handleFormSubmit
     });
 
@@ -68,8 +67,7 @@ export default class PointPresenter {
       dataOffers: this.#dataOffers,
       buttonText: DELETE,
       createRollUp: createRollUpTemplate(),
-      //createOffersTemplate: createOffersSelectorTemplate(dataOffers, this.#point),
-      //createDestinationTemplate: createDestinationSelectorTemplate(this.#dataDestinations, this.#point),
+      isAddPoint: false,
 
       onEditFormSubmit: this.#handleFormSubmit,
       onEditFormButtonClick: this.#handleEditClick

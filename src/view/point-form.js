@@ -11,40 +11,69 @@ function createTypeItemTemplate(type, id) {
   `);
 }
 
-function createOffersSelectorTemplate(dataOffers, point) {
+function createOffersSelectorTemplate(dataOffers, point, isAddPoint) {
   const {offers} = point;
   const pointTypeOffer = getPointTypeOffer(dataOffers, point);
-  return (
-    pointTypeOffer.offers.length !== 0 ?
-      `<section class="event__section  event__section--offers">
+  if(isAddPoint) {
+    return (
+      pointTypeOffer.offers.length !== 0 ?
+        `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-    ${pointTypeOffer.offers.map((item, index)=> {
-      const checkedOffers = offers.includes(item.id) ? 'checked' : '';
-      return (`<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden"  data-offer-id="${item.id}" id="event-offer-${pointTypeOffer.type}-${index}" type="checkbox" name="event-offer-${pointTypeOffer.type}"
-        ${checkedOffers}>
-        <label class="event__offer-label" for="event-offer-${pointTypeOffer.type}-${index}">
-          <span class="event__offer-title">${item.title}</span>
-          &plus;&euro;&nbsp;
-          <span class="event__offer-price">${item.price}</span>
-        </label>
-      </div>`);
-    }
-    ).join('')}
+    ${pointTypeOffer.offers.map((item)=>
+        `<div class="event__offer-selector">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${pointTypeOffer.type}-1" type="checkbox" name="event-offer-${pointTypeOffer.type}">
+    <label class="event__offer-label" for="event-offer-${pointTypeOffer.type}-1">
+      <span class="event__offer-title">${item.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${item.price}</span>
+    </label>
+  </div>`).join('')}
     </div>
   </section>` : ''
-  );
+    );
+  } else{
+    return (
+      pointTypeOffer.offers.length !== 0 ?
+        `<section class="event__section  event__section--offers">
+      <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+      <div class="event__available-offers">
+      ${pointTypeOffer.offers.map((item, index)=> {
+        const checkedOffers = offers.includes(item.id) ? 'checked' : '';
+        return (`<div class="event__offer-selector">
+          <input class="event__offer-checkbox  visually-hidden"  data-offer-id="${item.id}" id="event-offer-${pointTypeOffer.type}-${index}" type="checkbox" name="event-offer-${pointTypeOffer.type}"
+          ${checkedOffers}>
+          <label class="event__offer-label" for="event-offer-${pointTypeOffer.type}-${index}">
+            <span class="event__offer-title">${item.title}</span>
+            &plus;&euro;&nbsp;
+            <span class="event__offer-price">${item.price}</span>
+          </label>
+        </div>`);
+      }
+      ).join('')}
+      </div>
+    </section>` : ''
+    );
+  }
+
 }
 
 function createDestinationSelectorTemplate(dataDestinations, point) {
   const destinationById = getDestinationById(dataDestinations, point);
+
   return (
     destinationById.description || destinationById.pictures ?
       `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
     <p class="event__destination-description">${destinationById.description}</p>
+    <div class="event__photos-container">
+      <div class="event__photos-tape">
+      ${destinationById.pictures.map((item)=>
+      `<img class="event__photo" src=${item.src} alt="Event photo">`).join('')}
+      </div>
+    </div>
   </section>` : ''
   );
 }
@@ -57,7 +86,7 @@ function createRollUpTemplate () {
   );
 }
 
-function createEditPointFormTemplate(point, dataDestinations, dataOffers, buttonText, createRollUp/*createOffersTemplate, createDestinationTemplate*/) {
+function createEditPointFormTemplate(point, dataDestinations, dataOffers, buttonText, createRollUp, isAddPoint/*createOffersTemplate, createDestinationTemplate*/) {
   const {type,basePrice,dateFrom, dateTo} = point;
   const destinationById = getDestinationById(dataDestinations, point);
   return (`<form class="event event--edit" action="#" method="post">
@@ -108,28 +137,25 @@ function createEditPointFormTemplate(point, dataDestinations, dataOffers, button
     ${createRollUp}
   </header>
   <section class="event__details">
-  ${createOffersSelectorTemplate(dataOffers, point)}
+  ${createOffersSelectorTemplate(dataOffers, point, isAddPoint)}
   ${createDestinationSelectorTemplate(dataDestinations, point)}
   </section>
 </form>`);
 }
 
 export default class PointFormView extends AbstractStatefulView {
-  //_point = null;
   _dataOffers = null;
   _dataDestinations = null;
   _handleEditFormSubmit = null;
+
   _buttonText = null;
   createRollUp = null;
-  createOffersTemplate = null;
-  createDestinationTemplate = null;
-  constructor({point, dataDestinations, dataOffers, buttonText, createRollUp, /*createOffersTemplate, createDestinationTemplate,*/ onEditFormSubmit}) {
+  _isAddPoint = false;
+  constructor({point, dataDestinations, dataOffers, buttonText, createRollUp,isAddPoint, onEditFormSubmit}) {
     super();
-    //this._point = point;
     this._dataOffers = dataOffers;
     this._dataDestinations = dataDestinations;
-    //this.createOffersTemplate = createOffersTemplate;
-    //this.createDestinationTemplate = createDestinationTemplate;
+    this._isAddPoint = isAddPoint;
     this._buttonText = buttonText;
     this.createRollUp = createRollUp;
 
@@ -151,7 +177,7 @@ export default class PointFormView extends AbstractStatefulView {
 
 
   get template() {
-    return createEditPointFormTemplate(this._state, this._dataDestinations,this._dataOffers, this._buttonText, this.createRollUp/* this.*createOffersTemplate, this.createDestinationTemplate*/);
+    return createEditPointFormTemplate(this._state, this._dataDestinations,this._dataOffers, this._buttonText, this.createRollUp, this._isAddPoint);
   }
 
   reset(point) {
@@ -159,6 +185,7 @@ export default class PointFormView extends AbstractStatefulView {
       PointFormView.parsePointToState(point),
     );
   }
+
 
   static parsePointToState(point) {
     return {...point};
