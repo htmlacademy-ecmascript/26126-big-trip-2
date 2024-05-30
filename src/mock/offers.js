@@ -59,7 +59,7 @@ const offers = [
       },
       {
         id: 'b4c3e4e6-9053-42ce-b747-e281314baa39',
-        title: 'Upgrade to a business class',
+        title: 'Upgrade to a econom class',
         price: getRandomIntInclusive(100,200)
       },
     ]

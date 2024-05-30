@@ -48,6 +48,7 @@ const getPointTypeOffer = (offersMocks,pointMocks) => offersMocks.find((offer)=>
 
 const getDestinationById = (destMocks, pointMocks) => destMocks.find((item)=>item.id === pointMocks.destination);
 
+const getDestinationByTargetName = (destMocks, targetName) => destMocks.find((item)=>item.name === targetName);
 
 function sortPointTime(pointA, pointB) {
   const durationInHoursA = getDifferensInMilliseconds(pointA.dateFrom, pointA.dateTo);
@@ -63,4 +64,4 @@ function sortPointPrice(pointA, pointB) {
   return pointB.basePrice - pointA.basePrice;
 }
 
-export {isPointInPast, isPointInPresent, isPointInFuture, getPointTypeOffer,getDestinationById, changeDateFormat, getEventDuration, sortPointTime,sortPointPrice, sortPointDay};
+export {isPointInPast, isPointInPresent, isPointInFuture, getPointTypeOffer,getDestinationById, changeDateFormat, getEventDuration, sortPointTime,sortPointPrice, sortPointDay, getDestinationByTargetName};

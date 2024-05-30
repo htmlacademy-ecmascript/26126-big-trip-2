@@ -40,7 +40,7 @@ const destinations = [
   {
     id: 'cfe416cq-10xa-ye10-8077-2fs9a01edcab4',
     description: 'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
-    name: 'Vena',
+    name: 'Chamonix',
     pictures: [
       {
         src: `https://loremflickr.com/248/152?random=${getRandomIntInclusive(1,5)}`,
