@@ -4,7 +4,6 @@ import {getEventDuration, changeDateFormat, getPointTypeOffer,getDestinationById
 
 function createPointTemplate(point, dataOffers, dataDestinations) {
   const {type,basePrice,dateFrom, dateTo, isFavorite, offers} = point;
-
   const destinationById = getDestinationById(dataDestinations, point);
   const pointTypeOffer = getPointTypeOffer(dataOffers, point);
 
@@ -16,7 +15,8 @@ function createPointTemplate(point, dataOffers, dataDestinations) {
     <div class="event__type">
       <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
     </div>
-    <h3 class="event__title">${type} ${destinationById.name}</h3>
+    <h3 class="event__title">${type}
+    ${destinationById ? destinationById.name : ''}</h3>
     <div class="event__schedule">
       <p class="event__time">
         <time class="event__start-time" datetime=${dateFrom}>${changeDateFormat(dateFrom, TIME_FORMAT)}</time>

@@ -2,6 +2,8 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import {DATE_FORMAT_EVENT_START, TYPES, CITIES} from '../const.js';
 import {changeDateFormat, getPointTypeOffer, getDestinationById} from '../utils/point.js';
 
+import he from 'he';
+
 function createTypeItemTemplate(type, id) {
   return(`
   <div class="event__type-item">
@@ -21,10 +23,10 @@ function createOffersSelectorTemplate(dataOffers, point, isAddPoint) {
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-    ${pointTypeOffer.offers.map((item)=>
+    ${pointTypeOffer.offers.map((item, index)=>
         `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${pointTypeOffer.type}-1" type="checkbox" name="event-offer-${pointTypeOffer.type}">
-    <label class="event__offer-label" for="event-offer-${pointTypeOffer.type}-1">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${pointTypeOffer.type}-${index}" type="checkbox" name="event-offer-${pointTypeOffer.type}">
+    <label class="event__offer-label" for="event-offer-${pointTypeOffer.type}-${index}">
       <span class="event__offer-title">${item.title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${item.price}</span>
@@ -64,7 +66,7 @@ function createDestinationSelectorTemplate(dataDestinations, point) {
   const destinationById = getDestinationById(dataDestinations, point);
 
   return (
-    destinationById.description || destinationById.pictures ?
+    destinationById ?
       `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
     <p class="event__destination-description">${destinationById.description}</p>
@@ -86,7 +88,7 @@ function createRollUpTemplate () {
   );
 }
 
-function createEditPointFormTemplate(point, dataDestinations, dataOffers, buttonText, createRollUp, isAddPoint/*createOffersTemplate, createDestinationTemplate*/) {
+function createEditPointFormTemplate(point, dataDestinations, dataOffers, buttonText, createRollUp, isAddPoint) {
   const {type,basePrice,dateFrom, dateTo} = point;
   const destinationById = getDestinationById(dataDestinations, point);
   return (`<form class="event event--edit" action="#" method="post">
@@ -110,7 +112,7 @@ function createEditPointFormTemplate(point, dataDestinations, dataOffers, button
       <label class="event__label  event__type-output" for="event-destination-${point.id}">
       ${type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-${point.id}" type="text" name="event-destination" value="${destinationById.name}" list="destination-list-${point.id}">
+      <input class="event__input  event__input--destination" id="event-destination-${point.id}" type="text" name="event-destination" value="${destinationById ? he.encode(destinationById.name) : ''}" list="destination-list-${point.id}">
       <datalist id="destination-list-${point.id}">
       ${CITIES.map((city)=>`<option value="${city}"></option>`).join('')}
       </datalist>
@@ -118,10 +120,10 @@ function createEditPointFormTemplate(point, dataDestinations, dataOffers, button
 
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-${point.id}">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-${point.id}" type="text" name="event-start-time" value="${changeDateFormat(dateFrom,DATE_FORMAT_EVENT_START)}">
+      <input class="event__input  event__input--time" id="event-start-time-${point.id}" type="text" name="event-start-time" value="${!isAddPoint ? /*changeDateFormat(dateFrom,DATE_FORMAT_EVENT_START)*/ '' : ''}">
       &mdash;
       <label class="visually-hidden" for="event-end-time-${point.id}">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-${point.id}" type="text" name="event-end-time" value="${changeDateFormat(dateTo,DATE_FORMAT_EVENT_START)}">
+      <input class="event__input  event__input--time" id="event-end-time-${point.id}" type="text" name="event-end-time" value="${!isAddPoint ? /*changeDateFormat(dateTo,DATE_FORMAT_EVENT_START)*/ '' : ''}">
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -129,7 +131,7 @@ function createEditPointFormTemplate(point, dataDestinations, dataOffers, button
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-${point.id}" type="text" name="event-price" value="${basePrice}">
+      <input class="event__input  event__input--price" id="event-price-${point.id}" type="number" name="event-price" value="${basePrice}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>

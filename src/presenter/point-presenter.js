@@ -4,10 +4,10 @@ import PointView from '../view/point.js';
 import EditPointFormView from '../view/edit-point-form.js';
 
 import {createRollUpTemplate} from '../view/point-form.js';
-import {DELETE, CANCEL} from '../const.js';
 
-import addPointFormView from '../view/new-point-form.js';
+import {UserAction, UpdateType} from '../const.js';
 
+import {isPointInPast, isPointInPresent, isPointInFuture} from '../utils/point.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -20,7 +20,6 @@ export default class PointPresenter {
   #handleModeChange = null;
 
   #pointComponent = null;
-  #addPointComponent = null;
   #editPointComponent = null;
 
   #point = null;
@@ -51,26 +50,17 @@ export default class PointPresenter {
       onFavoriteClick: this.#handleFavoriteClick,
     });
 
-    this.#addPointComponent = new addPointFormView({
-      point: this.#point,
-      dataOffers: this.#dataOffers,
-      dataDestinations: this.#dataDestinations,
-      buttonText: CANCEL,
-      createRollUp: '',
-      isAddPoint: true,
-      onEditFormSubmit: this.#handleFormSubmit
-    });
-
     this.#editPointComponent = new EditPointFormView({
       point: this.#point,
       dataDestinations: this.#dataDestinations,
       dataOffers: this.#dataOffers,
-      buttonText: DELETE,
+      buttonText: 'Delete',
       createRollUp: createRollUpTemplate(),
       isAddPoint: false,
 
       onEditFormSubmit: this.#handleFormSubmit,
-      onEditFormButtonClick: this.#handleEditClick
+      onEditFormButtonClick: this.#handleEditClick,
+      onDeleteClick: this.#handleDeleteClick
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -110,7 +100,6 @@ export default class PointPresenter {
     }
   };
 
-
   #replacePointToEditForm(){
     replace(this.#editPointComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -125,7 +114,11 @@ export default class PointPresenter {
   }
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite}
+    );
   };
 
   #handleEditClick = () => {
@@ -138,9 +131,26 @@ export default class PointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (update) => {
+    const isMinorUpdate =
+    isPointInPast(this.#point.dateTo) !== isPointInPast(update.dateTo) || isPointInPresent(this.#point.dateFrom, this.#point.dateTo) !== isPointInPresent(this.#point.dateFrom, this.#point.dateTo) ||
+    isPointInFuture(this.#point.dateFrom) !== isPointInFuture(update.dateFrom);
+
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update
+    );
     this.#replaceEditFormToPoint();
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
   };
 
 }
