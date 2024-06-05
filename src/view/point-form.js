@@ -1,6 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {DATE_FORMAT_EVENT_START, TYPES, CITIES} from '../const.js';
-import {changeDateFormat, getPointTypeOffer, getDestinationById} from '../utils/point.js';
+import {TYPES, CITIES} from '../const.js';
+import {getPointTypeOffer, getDestinationById} from '../utils/point.js';
 
 import he from 'he';
 
@@ -89,8 +89,9 @@ function createRollUpTemplate () {
 }
 
 function createEditPointFormTemplate(point, dataDestinations, dataOffers, buttonText, createRollUp, isAddPoint) {
-  const {type,basePrice,dateFrom, dateTo} = point;
+  const {type,basePrice, isDisabled, isSaving, isDeleting} = point;
   const destinationById = getDestinationById(dataDestinations, point);
+
   return (`<form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
@@ -120,10 +121,10 @@ function createEditPointFormTemplate(point, dataDestinations, dataOffers, button
 
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-${point.id}">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-${point.id}" type="text" name="event-start-time" value="${!isAddPoint ? /*changeDateFormat(dateFrom,DATE_FORMAT_EVENT_START)*/ '' : ''}">
+      <input class="event__input  event__input--time" id="event-start-time-${point.id}" type="text" name="event-start-time" placeholder ="Select date" value="">
       &mdash;
       <label class="visually-hidden" for="event-end-time-${point.id}">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-${point.id}" type="text" name="event-end-time" value="${!isAddPoint ? /*changeDateFormat(dateTo,DATE_FORMAT_EVENT_START)*/ '' : ''}">
+      <input class="event__input  event__input--time" id="event-end-time-${point.id}" type="text" name="event-end-time"  placeholder ="Select date" value="">
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -131,11 +132,11 @@ function createEditPointFormTemplate(point, dataDestinations, dataOffers, button
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-${point.id}" type="number" name="event-price" value="${basePrice}">
+      <input class="event__input  event__input--price" id="event-price-${point.id}" type="number" name="event-price" value="${isAddPoint ? 0 : basePrice}">
     </div>
 
-    <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-    <button class="event__reset-btn" type="reset">${buttonText}</button>
+    <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+    <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting' : buttonText }</button>
     ${createRollUp}
   </header>
   <section class="event__details">
@@ -152,12 +153,21 @@ export default class PointFormView extends AbstractStatefulView {
 
   _buttonText = null;
   createRollUp = null;
-  _isAddPoint = false;
+  //_isAddPoint = false;
+  //_isDisabled = false;
+  // _isSaving = false;
+  // _isDeleting = false;
+
   constructor({point, dataDestinations, dataOffers, buttonText, createRollUp,isAddPoint, onEditFormSubmit}) {
     super();
     this._dataOffers = dataOffers;
     this._dataDestinations = dataDestinations;
+
     this._isAddPoint = isAddPoint;
+    //this._isDisabled = isDisabled;
+    //this._isSaving = isSaving;
+    //this._isDeleting = isDeleting;
+
     this._buttonText = buttonText;
     this.createRollUp = createRollUp;
 
@@ -165,12 +175,7 @@ export default class PointFormView extends AbstractStatefulView {
 
     this._handleEditFormSubmit = onEditFormSubmit;
     this.element.addEventListener('submit', this._editFormSubmitHandler);
-    //this._restoreHandlers();
   }
-
-  /*_restoreHandlers() {
-    this.element.addEventListener('submit', this._editFormSubmitHandler);
-  }*/
 
   _editFormSubmitHandler = (evt) => {
     evt.preventDefault();
@@ -190,11 +195,19 @@ export default class PointFormView extends AbstractStatefulView {
 
 
   static parsePointToState(point) {
-    return {...point};
+    return {...point,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
   }
 
   static parseStateToPoint(state) {
     const point = {...state};
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
     return point;
   }
 

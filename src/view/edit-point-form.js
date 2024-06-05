@@ -4,6 +4,7 @@ import {getDestinationByTargetName} from '../utils/point.js';
 import {BLANK_POINT} from '../const.js';
 
 import dayjs from 'dayjs';
+// eslint-disable-next-line no-undef
 const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
 import flatpickr from 'flatpickr';
@@ -63,7 +64,8 @@ export default class EditPointFormView extends PointFormView{
 
   #pointDestinationInputHandler = (evt) => {
     evt.preventDefault();
-    const destinationId = getDestinationByTargetName(this._dataDestinations, evt.target.value).id;
+    const destinationByTargetName = getDestinationByTargetName(this._dataDestinations, evt.target.value);
+    const destinationId = destinationByTargetName ? destinationByTargetName.id : null;
     this.updateElement({
       destination: destinationId ? destinationId : ''
     });
@@ -100,14 +102,14 @@ export default class EditPointFormView extends PointFormView{
 
   #dateChangeHandler = ([userDateFrom]) => {
     this.updateElement({
-      dateFrom: dayjs(userDateFrom).toISOString(),
-      dateTo: dayjs(userDateFrom).toISOString(),
+      dateFrom: userDateFrom,
+      dateTo: userDateFrom,
     });
   };
 
   #dateToChangeHandler = ([userTo]) => {
     this.updateElement({
-      dateTo: dayjs(userTo).toISOString(),
+      dateTo: userTo,
     });
   };
 
@@ -115,17 +117,17 @@ export default class EditPointFormView extends PointFormView{
     this.#datepickerFrom = flatpickr(
       this.element.querySelector('[name="event-start-time"]'),
       {
-        dateFormat: 'j/m/y H:S',
+        dateFormat: 'j/m/y H:i',
         enableTime: true,
         defaultDate: this._state.dateFrom,
         onChange: this.#dateChangeHandler,
       },
-      console.log(this._state.dateFrom)
+
     );
     this.#datepickerTo = flatpickr(
       this.element.querySelector('[name="event-end-time"]'),
       {
-        dateFormat: 'j/m/y H:S',
+        dateFormat: 'j/m/y H:i',
         enableTime: true,
         defaultDate: this._state.dateTo,
         minDate: this._state.dateFrom,
