@@ -6,6 +6,7 @@ function createTripInfoTemplate(points, dataOffers, dataDestinations) {
 
   const sortedPoints = points.sort(sortPointDay);
   const firstPoint = sortedPoints[0];
+  const secondPoint = sortedPoints[1];
   const lastPoint = sortedPoints[(sortedPoints.length - 1)];
 
   const initialValue = 0;
@@ -34,12 +35,15 @@ function createTripInfoTemplate(points, dataOffers, dataDestinations) {
   const totalPrice = offersPrices.reduce((accumulator, currentValue) => accumulator + currentValue, basePricesSum);
 
   const startCity = getDestinationById(dataDestinations, firstPoint);
+  const secondCity = getDestinationById(dataDestinations, secondPoint);
   const endCity = getDestinationById(dataDestinations, lastPoint);
 
   return (
     `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
-      <h1 class="trip-info__title">${startCity.name} &mdash; ... &mdash; ${endCity.name}</h1>
+      <h1 class="trip-info__title">${startCity.name} &mdash;
+      ${sortedPoints.length === 3 ? secondCity.name : '...'}
+      &mdash; ${endCity.name}</h1>
 
       <p class="trip-info__dates">${changeDateFormat(firstPoint.dateFrom, DATE_FORMAT)}&nbsp;&mdash;&nbsp;${changeDateFormat(lastPoint.dateTo, DATE_FORMAT)}</p>
     </div>
