@@ -1,95 +1,34 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
-import EditPointFormView from '../view/edit-point-form.js';
-import {UserAction, UpdateType} from '../const.js';
+import TripInfoView from '../view/trip-info.js';
 
 export default class InfoTripPresenter {
+  #points = null;
   #dataOffers = null;
   #dataDestinations = null;
 
-  #pointListContainer = null;
-  //#handleDataChange = null;
-  //#handleDestroy = null;
+  #tripMainElement = null;
 
-  #editPointFormComponent = null;
+  #tripInfoComponent = null;
 
-  constructor({pointListContainer, onDataChange, onDestroy}) {
-    this.#pointListContainer = pointListContainer;
-    //this.#handleDataChange = onDataChange;
-    //this.#handleDestroy = onDestroy;
+  constructor({tripMainElement}) {
+    this.#tripMainElement = tripMainElement;
   }
 
-  init(dataDestinations) {
-
+  init(points, dataOffers, dataDestinations) {
+    this.#points = points;
+    this.#dataOffers = dataOffers;
     this.#dataDestinations = dataDestinations;
 
-    if (this.#editPointFormComponent !== null) {
-      return;
-    }
-
-    this.#editPointFormComponent = new EditPointFormView({
+    this.#tripInfoComponent = new TripInfoView({
+      points: this.#points,
       dataOffers: this.#dataOffers,
       dataDestinations: this.#dataDestinations,
-      buttonText: 'Cancel',
-      createRollUp: '',
-      isAddPoint: true,
-      onEditFormSubmit: this.#handleFormSubmit,
-      onDeleteClick: this.#handleDeleteClick,
     });
 
-    render(this.#editPointFormComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
-
-    document.addEventListener('keydown', this.#escKeyDownHandler);
+    render(this.#tripInfoComponent, this.#tripMainElement, RenderPosition.AFTERBEGIN);
   }
 
   destroy() {
-    if (this.#editPointFormComponent === null) {
-      return;
-    }
-
-    this.#handleDestroy();
-
-    remove(this.#editPointFormComponent);
-    this.#editPointFormComponent = null;
-
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    remove(this.#tripInfoComponent);
   }
-
-  #handleFormSubmit = (point) => {
-    this.#handleDataChange(
-      UserAction.ADD_POINT,
-      UpdateType.MINOR,
-      point
-    );
-    //this.destroy();
-  };
-
-  #handleDeleteClick = () => {
-    this.destroy();
-  };
-
-  setSaving() {
-    this.#editPointFormComponent.updateElement({
-      isDisabled: true,
-      isSaving: true,
-    });
-  }
-
-  setAborting() {
-    const resetFormState = () => {
-      this.#editPointFormComponent.updateElement({
-        isDisabled: false,
-        isSaving: false,
-        isDeleting: false,
-      });
-    };
-
-    this.#editPointFormComponent.shake(resetFormState);
-  }
-
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this.destroy();
-    }
-  };
 }

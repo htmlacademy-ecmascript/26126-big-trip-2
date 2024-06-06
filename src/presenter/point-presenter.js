@@ -18,6 +18,7 @@ export default class PointPresenter {
   #pointListContainer = null;
   #handleDataChange = null;
   #handleModeChange = null;
+  #tripInfoComponent = null;
 
   #pointComponent = null;
   #editPointComponent = null;

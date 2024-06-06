@@ -8,14 +8,14 @@ import {filterObject} from '../utils/filterObject.js';
 
 import FilterPresenter from '../presenter/filter-presenter.js';
 import AddPointPresenter from '../presenter/add-point-presenter.js';
+import PointPresenter from './point-presenter.js';
+import InfoTripPresenter from './info-presenter.js';
 
 import SortView from '../view/sort.js';
 import PointListView from '../view/point-list.js';
 import EmptyListView from '../view/no-point.js';
 import LoadingView from '../view/loading.js';
 import FailedView from '../view/load-failed.js';
-
-import PointPresenter from './point-presenter.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
@@ -42,6 +42,7 @@ export default class TripPresenter {
 
   #pointPresenters = new Map();
   #addPointPresenter = null;
+  #infoTripPresenter = null;
 
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
@@ -133,21 +134,26 @@ export default class TripPresenter {
       case UpdateType.PATCH:
       // - обновить часть списка (например, когда поменялось описание)
         this.#pointPresenters.get(data.id).init(data, this.#pointsModel.offers, this.#pointsModel.destinations);
+        this.#infoTripPresenter.destroy();
+        this.#renderInfoTrip();
         break;
       case UpdateType.MINOR:
         this.#clearTripBoard({resetSortType: true});
         this.#renderSort();
+        this.#renderInfoTrip();
         this.#renderPointList();
         break;
       case UpdateType.MAJOR:
         // - обновить всю доску (например, при переключении фильтра)
         this.#clearTripBoard({resetSortType: true});
         this.#renderSort();
+        this.#renderInfoTrip();
         this.#renderPointList();
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingComponent);
+        this.#renderInfoTrip();
         this.#renderPointList();
         break;
     }
@@ -156,7 +162,7 @@ export default class TripPresenter {
   init () {
     //this.#offers = this.#pointsModel.offers;
     //this.#destinations = [...this.#pointsModel.destinations];
-
+    //this.#renderInfoTrip();
     this.#renderFilter();
     this.#renderSort();
     this.#renderPointList();
@@ -174,6 +180,13 @@ export default class TripPresenter {
 
   #renderPoints(points) {
     points.forEach((point)=> this.#renderPoint(point, this.#pointsModel.offers, this.#pointsModel.destinations));
+  }
+
+  #renderInfoTrip() {
+    this.#infoTripPresenter = new InfoTripPresenter({
+      tripMainElement: this.#tripMain,
+    });
+    this.#infoTripPresenter.init(this.#pointsModel.points, this.#pointsModel.offers, this.#pointsModel.destinations);
   }
 
   #renderEmptyList (){
@@ -195,6 +208,7 @@ export default class TripPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
     this.#addPointPresenter.destroy();
+    this.#infoTripPresenter.destroy();
 
     remove(this.#sortComponent);
     remove(this.#emptyListComponent);

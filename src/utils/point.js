@@ -43,7 +43,7 @@ const getEventDuration = (dateFrom, dateTo) => {
 
 const getPointTypeOffer = (offersMocks,pointMocks) => offersMocks.find((offer)=> offer.type === pointMocks.type);
 
-const getDestinationById = (destMocks, pointMocks) => destMocks.find((item)=>item.id === pointMocks.destination);
+const getDestinationById = (destData, pointMocks) => destData.find((item)=>item.id === pointMocks.destination);
 
 const getDestinationByTargetName = (destMocks, targetName) => destMocks.find((item)=>item.name === targetName);
 
