@@ -33,6 +33,8 @@ function handleaddEventButtonClick() {
   tripPresenter.createPoint();
   addEventButton.disabled = true;
 }
-pointsModel.init();
-tripPresenter.init();
+pointsModel.init().then(()=>{
+  tripPresenter.init();
+});
+
 
