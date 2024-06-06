@@ -2,24 +2,24 @@ import {remove, render, RenderPosition} from '../framework/render.js';
 import EditPointFormView from '../view/edit-point-form.js';
 import {UserAction, UpdateType} from '../const.js';
 
-export default class AddPointPresenter {
+export default class InfoTripPresenter {
   #dataOffers = null;
   #dataDestinations = null;
 
   #pointListContainer = null;
-  #handleDataChange = null;
-  #handleDestroy = null;
+  //#handleDataChange = null;
+  //#handleDestroy = null;
 
   #editPointFormComponent = null;
 
   constructor({pointListContainer, onDataChange, onDestroy}) {
     this.#pointListContainer = pointListContainer;
-    this.#handleDataChange = onDataChange;
-    this.#handleDestroy = onDestroy;
+    //this.#handleDataChange = onDataChange;
+    //this.#handleDestroy = onDestroy;
   }
 
-  init(dataOffers, dataDestinations) {
-    this.#dataOffers = dataOffers;
+  init(dataDestinations) {
+
     this.#dataDestinations = dataDestinations;
 
     if (this.#editPointFormComponent !== null) {
@@ -27,8 +27,8 @@ export default class AddPointPresenter {
     }
 
     this.#editPointFormComponent = new EditPointFormView({
-      dataDestinations: this.#dataDestinations,
       dataOffers: this.#dataOffers,
+      dataDestinations: this.#dataDestinations,
       buttonText: 'Cancel',
       createRollUp: '',
       isAddPoint: true,
@@ -60,6 +60,7 @@ export default class AddPointPresenter {
       UpdateType.MINOR,
       point
     );
+    //this.destroy();
   };
 
   #handleDeleteClick = () => {

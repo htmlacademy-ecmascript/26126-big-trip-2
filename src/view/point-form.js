@@ -25,7 +25,7 @@ function createOffersSelectorTemplate(dataOffers, point, isAddPoint) {
     <div class="event__available-offers">
     ${pointTypeOffer.offers.map((item, index)=>
         `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${pointTypeOffer.type}-${index}" type="checkbox" name="event-offer-${pointTypeOffer.type}">
+    <input class="event__offer-checkbox  visually-hidden" data-offer-id="${item.id}" id="event-offer-${pointTypeOffer.type}-${index}" type="checkbox" name="event-offer-${pointTypeOffer.type}">
     <label class="event__offer-label" for="event-offer-${pointTypeOffer.type}-${index}">
       <span class="event__offer-title">${item.title}</span>
       &plus;&euro;&nbsp;
@@ -153,10 +153,7 @@ export default class PointFormView extends AbstractStatefulView {
 
   _buttonText = null;
   createRollUp = null;
-  //_isAddPoint = false;
-  //_isDisabled = false;
-  // _isSaving = false;
-  // _isDeleting = false;
+
 
   constructor({point, dataDestinations, dataOffers, buttonText, createRollUp,isAddPoint, onEditFormSubmit}) {
     super();
@@ -164,10 +161,6 @@ export default class PointFormView extends AbstractStatefulView {
     this._dataDestinations = dataDestinations;
 
     this._isAddPoint = isAddPoint;
-    //this._isDisabled = isDisabled;
-    //this._isSaving = isSaving;
-    //this._isDeleting = isDeleting;
-
     this._buttonText = buttonText;
     this.createRollUp = createRollUp;
 

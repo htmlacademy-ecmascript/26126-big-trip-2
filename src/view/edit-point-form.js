@@ -3,10 +3,6 @@ import {getDestinationByTargetName} from '../utils/point.js';
 
 import {BLANK_POINT} from '../const.js';
 
-import dayjs from 'dayjs';
-// eslint-disable-next-line no-undef
-const utc = require('dayjs/plugin/utc');
-dayjs.extend(utc);
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -77,7 +73,6 @@ export default class EditPointFormView extends PointFormView{
     this._setState({
       offers: checkedOffers.map((offer)=>offer.dataset.offerId)
     });
-
   };
 
   #pointPriceInputHandler = (evt) => {

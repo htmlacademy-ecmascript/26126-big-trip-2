@@ -106,7 +106,6 @@ export default class TripPresenter {
         } catch(err) {
           this.#pointPresenters.get(update.id).setAborting();
         }
-        this.#pointsModel.updatePoint(updateType, update);
         break;
       case UserAction.ADD_POINT:
         this.#addPointPresenter.setSaving();
@@ -115,7 +114,6 @@ export default class TripPresenter {
         } catch(err) {
           this.#addPointPresenter.setAborting();
         }
-        this.#pointsModel.addPoint(updateType, update);
         break;
       case UserAction.DELETE_POINT:
         this.#pointPresenters.get(update.id).setDeleting();
