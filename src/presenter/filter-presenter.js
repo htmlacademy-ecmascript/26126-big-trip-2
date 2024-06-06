@@ -24,13 +24,19 @@ export default class FilterPresenter {
     }));
   }
 
+  get points () {
+    return this.#pointsModel.points;
+  }
+
   init() {
     const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
+    const points = this.points;
 
     this.#filterComponent = new FilterView({
       filters,
       currentFilterType: this.#filterModel.filter,
+      points,
       onFilterTypeChange: this.#handleFilterTypeChange
     });
 
