@@ -2,6 +2,13 @@ const DATE_FORMAT_EVENT = 'MMM DD';
 const TIME_FORMAT = 'HH:mm';
 const DATE_FORMAT_EVENT_START = 'DD/MM/YY HH:MM';
 
+const POINTS_URL = 'big-trip/points';
+const OFFERS_URL = 'big-trip/offers';
+const DESTINATIONS_URL = 'big-trip/destinations';
+
+const AUTHORIZATION = 'Basic ethictghetma';
+const END_POINT = 'https://22.objects.htmlacademy.pro';
+
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
@@ -19,7 +26,6 @@ const SortType = {
 
 const TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const SORTS = Object.values(SortType);
-const CITIES = ['Amsterdam', 'Geneva', 'Chamonix'];
 
 const UserAction = {
   UPDATE_POINT: 'UPDATE_POINT',
@@ -45,4 +51,4 @@ const BLANK_POINT = {
 };
 
 
-export {DATE_FORMAT_EVENT, TIME_FORMAT, DATE_FORMAT_EVENT_START, FilterType, TYPES, CITIES, SortType, SORTS, UserAction, UpdateType, BLANK_POINT};
+export {DATE_FORMAT_EVENT, TIME_FORMAT, DATE_FORMAT_EVENT_START, FilterType, TYPES, SortType, SORTS, UserAction, UpdateType, BLANK_POINT, POINTS_URL, OFFERS_URL, DESTINATIONS_URL, AUTHORIZATION, END_POINT};

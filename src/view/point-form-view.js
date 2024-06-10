@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {TYPES, CITIES} from '../const.js';
+import {TYPES} from '../const.js';
 import {getPointTypeOffer, getDestinationById} from '../utils/point.js';
 
 import he from 'he';
@@ -89,7 +89,9 @@ function createRollUpTemplate () {
 }
 
 function createEditPointFormTemplate(point, dataDestinations, dataOffers, buttonText, createRollUp, isAddPoint) {
-  const {type,basePrice, isDisabled, isSaving, isDeleting} = point;
+
+  const cities = dataDestinations.map((item)=>item.name);
+  const {type, basePrice, isDisabled, isSaving, isDeleting} = point;
   const destinationById = getDestinationById(dataDestinations, point);
 
   return (`<form class="event event--edit" action="#" method="post">
@@ -115,7 +117,7 @@ function createEditPointFormTemplate(point, dataDestinations, dataOffers, button
       </label>
       <input class="event__input  event__input--destination" id="event-destination-${point.id}" type="text" name="event-destination" value="${destinationById ? he.encode(destinationById.name) : ''}" list="destination-list-${point.id}">
       <datalist id="destination-list-${point.id}">
-      ${CITIES.map((city)=>`<option value="${city}"></option>`).join('')}
+      ${cities.map((city)=>`<option value="${city}"></option>`).join('')}
       </datalist>
     </div>
 
@@ -165,15 +167,9 @@ export default class PointFormView extends AbstractStatefulView {
     this.createRollUp = createRollUp;
 
     this._setState(PointFormView.parsePointToState(point));
-
     this._handleEditFormSubmit = onEditFormSubmit;
     this.element.addEventListener('submit', this._editFormSubmitHandler);
   }
-
-  _editFormSubmitHandler = (evt) => {
-    evt.preventDefault();
-    this._handleEditFormSubmit(PointFormView.parseStateToPoint(this._state));
-  };
 
 
   get template() {
@@ -186,6 +182,10 @@ export default class PointFormView extends AbstractStatefulView {
     );
   }
 
+  _editFormSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._handleEditFormSubmit(PointFormView.parseStateToPoint(this._state));
+  };
 
   static parsePointToState(point) {
     return {...point,

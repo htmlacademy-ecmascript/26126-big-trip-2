@@ -1,4 +1,4 @@
-import PointFormView from '../view/point-form.js';
+import PointFormView from './point-form-view.js';
 import {getDestinationByTargetName} from '../utils/point.js';
 
 import {BLANK_POINT} from '../const.js';
@@ -50,6 +50,48 @@ export default class EditPointFormView extends PointFormView{
     this.#setDatepicker();
   }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
+  }
+
+  #setDatepicker() {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector('[name="event-start-time"]'),
+      {
+        dateFormat: 'j/m/y H:i',
+        enableTime: true,
+        defaultDate: this._state.dateFrom,
+        onChange: this.#dateChangeHandler,
+      },
+
+    );
+
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector('[name="event-end-time"]'),
+      {
+        dateFormat: 'j/m/y H:i',
+        enableTime: true,
+        defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
+        onChange: this.#dateToChangeHandler,
+      },
+    );
+  }
+
+  _editFormButtonHandler = (evt) => {
+    evt.preventDefault();
+    this._handleEditFormButtonClick();
+  };
+
   #pointTypeInputHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({
@@ -78,22 +120,9 @@ export default class EditPointFormView extends PointFormView{
   #pointPriceInputHandler = (evt) => {
     evt.preventDefault();
     this._setState({
-      basePrice: evt.target.value
+      basePrice: Number(evt.target.value)
     });
   };
-
-  removeElement() {
-    super.removeElement();
-
-    if (this.#datepickerFrom) {
-      this.#datepickerFrom.destroy();
-      this.#datepickerFrom = null;
-    }
-    if (this.#datepickerTo) {
-      this.#datepickerTo.destroy();
-      this.#datepickerTo = null;
-    }
-  }
 
   #dateChangeHandler = ([userDateFrom]) => {
     this.updateElement({
@@ -106,34 +135,6 @@ export default class EditPointFormView extends PointFormView{
     this.updateElement({
       dateTo: userTo,
     });
-  };
-
-  #setDatepicker() {
-    this.#datepickerFrom = flatpickr(
-      this.element.querySelector('[name="event-start-time"]'),
-      {
-        dateFormat: 'j/m/y H:i',
-        enableTime: true,
-        defaultDate: this._state.dateFrom,
-        onChange: this.#dateChangeHandler,
-      },
-
-    );
-    this.#datepickerTo = flatpickr(
-      this.element.querySelector('[name="event-end-time"]'),
-      {
-        dateFormat: 'j/m/y H:i',
-        enableTime: true,
-        defaultDate: this._state.dateTo,
-        minDate: this._state.dateFrom,
-        onChange: this.#dateToChangeHandler,
-      },
-    );
-  }
-
-  _editFormButtonHandler = (evt) => {
-    evt.preventDefault();
-    this._handleEditFormButtonClick();
   };
 
   #formDeleteClickHandler = (evt) => {

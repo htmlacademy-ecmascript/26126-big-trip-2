@@ -21,6 +21,14 @@ export default class PointsModel extends Observable {
     return this.#isLoadFailed;
   }
 
+  get offers() {
+    return this.#dataOffers;
+  }
+
+  get destinations() {
+    return this.#dataDestinations;
+  }
+
   async init() {
     try {
       const points = await this.#pointApiService.points;
@@ -39,10 +47,10 @@ export default class PointsModel extends Observable {
   }
 
   async updatePoint(updateType, update) {
-    const index = this.#points.findIndex((task) => task.id === update.id);
+    const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t update unexisting task');
+      throw new Error('Can\'t update unexisting point');
     }
 
     try{
@@ -53,7 +61,6 @@ export default class PointsModel extends Observable {
         update,
         ...this.#points.slice(index + 1),
       ];
-
       this._notify(updateType, updatePoint);
     }catch(err) {
       throw new Error('Can\'t update point');
@@ -92,13 +99,6 @@ export default class PointsModel extends Observable {
     }
   }
 
-  get offers() {
-    return this.#dataOffers;
-  }
-
-  get destinations() {
-    return this.#dataDestinations;
-  }
 
   #adaptToClient(point) {
     const adaptedPoint = {...point,
@@ -108,7 +108,6 @@ export default class PointsModel extends Observable {
       isFavorite: point['is_favorite'],
     };
 
-    // Ненужные ключи мы удаляем
     delete adaptedPoint['base_price'];
     delete adaptedPoint['date_from'];
     delete adaptedPoint['date_to'];

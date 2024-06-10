@@ -31,7 +31,7 @@ const getEventDuration = (dateFrom, dateTo) => {
   const differenceInHours = dayjs(dateTo).diff(dayjs(dateFrom), 'hour');
   let eventDuration;
 
-  if(differenceInHours <= 1) {
+  if(differenceInHours < 1) {
     eventDuration = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).format('mm[M]');
   } else if(differenceInHours < 24) {
     eventDuration = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).format('HH[H] mm[M]');

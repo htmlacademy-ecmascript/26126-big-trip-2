@@ -1,5 +1,5 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
-import EditPointFormView from '../view/edit-point-form.js';
+import EditPointFormView from '../view/edit-point-form-view.js';
 import {UserAction, UpdateType} from '../const.js';
 
 export default class AddPointPresenter {
@@ -12,8 +12,8 @@ export default class AddPointPresenter {
 
   #editPointFormComponent = null;
 
-  constructor({pointListContainer, onDataChange, onDestroy}) {
-    this.#pointListContainer = pointListContainer;
+  constructor({pointListContainerElement, onDataChange, onDestroy}) {
+    this.#pointListContainer = pointListContainerElement;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
   }
@@ -41,31 +41,6 @@ export default class AddPointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
-  destroy() {
-    if (this.#editPointFormComponent === null) {
-      return;
-    }
-
-    this.#handleDestroy();
-
-    remove(this.#editPointFormComponent);
-    this.#editPointFormComponent = null;
-
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
-  }
-
-  #handleFormSubmit = (point) => {
-    this.#handleDataChange(
-      UserAction.ADD_POINT,
-      UpdateType.MINOR,
-      point
-    );
-  };
-
-  #handleDeleteClick = () => {
-    this.destroy();
-  };
-
   setSaving() {
     this.#editPointFormComponent.updateElement({
       isDisabled: true,
@@ -84,6 +59,32 @@ export default class AddPointPresenter {
 
     this.#editPointFormComponent.shake(resetFormState);
   }
+
+  destroy() {
+    if (this.#editPointFormComponent === null) {
+      return;
+    }
+
+    this.#handleDestroy();
+
+    remove(this.#editPointFormComponent);
+    this.#editPointFormComponent = null;
+
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+  }
+
+
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(
+      UserAction.ADD_POINT,
+      UpdateType.MINOR,
+      point
+    );
+  };
+
+  #handleDeleteClick = () => {
+    this.destroy();
+  };
 
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
