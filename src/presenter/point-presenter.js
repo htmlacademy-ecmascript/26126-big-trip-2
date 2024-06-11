@@ -4,9 +4,7 @@ import PointView from '../view/point-view.js';
 import EditPointFormView from '../view/edit-point-form-view.js';
 
 import {createRollUpTemplate} from '../view/point-form-view.js';
-
 import {UserAction, UpdateType} from '../const.js';
-
 import {isPointInPast, isPointInPresent, isPointInFuture} from '../utils/point.js';
 
 const Mode = {

@@ -3,6 +3,7 @@ import {changeDateFormat, getDestinationById, sortPointDay} from '../utils/point
 import {getSumOfArray, getOffers} from '../utils/trip-info.js';
 
 const DATE_FORMAT = 'DD MMM';
+const CITIES_COUNT = 3;
 
 function createTripInfoTemplate(points, dataOffers, dataDestinations) {
 
@@ -16,7 +17,7 @@ function createTripInfoTemplate(points, dataOffers, dataDestinations) {
   const offersOfData = getOffers(dataOffers);
 
   const offersPrices = offersOfPoints.flat().map((offerOfPoints)=>{
-    let price = 0;
+    let price;
     offersOfData.flat().forEach((dataOffer)=>{
       if (dataOffer.id === offerOfPoints){
         price = dataOffer.price;
@@ -36,8 +37,8 @@ function createTripInfoTemplate(points, dataOffers, dataDestinations) {
     `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${startCity.name} &mdash;
-      ${sortedPoints.length <= 3 ? secondCity.name : '...'}
-      &mdash; ${endCity.name === secondCity.name ? '' : endCity.name}</h1>
+      ${sortedPoints.length <= CITIES_COUNT ? secondCity.name : '...'}
+      &mdash; ${endCity.name}</h1>
 
       <p class="trip-info__dates">${changeDateFormat(firstPoint.dateFrom, DATE_FORMAT)}&nbsp;&mdash;&nbsp;${changeDateFormat(lastPoint.dateTo, DATE_FORMAT)}</p>
     </div>
