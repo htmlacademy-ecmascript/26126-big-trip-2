@@ -1,15 +1,14 @@
 import dayjs from 'dayjs';
-// eslint-disable-next-line no-undef
-const isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
-dayjs.extend(isSameOrBefore);
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import duration from 'dayjs/plugin/duration';
 
-// eslint-disable-next-line no-undef
-const isSameOrAfter = require('dayjs/plugin/isSameOrAfter');
+dayjs.extend(duration);
+dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 
-// eslint-disable-next-line no-undef
-const duration = require('dayjs/plugin/duration');
-dayjs.extend(duration);
+const ONE_HOUR = 1;
+const ONE_DAY_HOURS = 24;
 
 function isPointInPast(endDate) {
   return endDate && dayjs().isAfter(endDate, 'D');
@@ -31,11 +30,11 @@ const getEventDuration = (dateFrom, dateTo) => {
   const differenceInHours = dayjs(dateTo).diff(dayjs(dateFrom), 'hour');
   let eventDuration;
 
-  if(differenceInHours <= 1) {
+  if(differenceInHours < ONE_HOUR) {
     eventDuration = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).format('mm[M]');
-  } else if(differenceInHours < 24) {
+  } else if(differenceInHours < ONE_DAY_HOURS) {
     eventDuration = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).format('HH[H] mm[M]');
-  } else if(differenceInHours >= 24) {
+  } else if(differenceInHours >= ONE_DAY_HOURS) {
     eventDuration = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).format('DD[D] HH[H] mm[M]');
   }
   return eventDuration;
@@ -61,4 +60,6 @@ function sortPointPrice(pointA, pointB) {
   return pointB.basePrice - pointA.basePrice;
 }
 
-export {isPointInPast, isPointInPresent, isPointInFuture, getPointTypeOffer,getDestinationById, changeDateFormat, getEventDuration, sortPointTime,sortPointPrice, sortPointDay, getDestinationByTargetName};
+const getNewDateAddOneMinute = (currentDate)=> new Date(dayjs(currentDate).add(1,'minute'));
+
+export {isPointInPast, isPointInPresent, isPointInFuture, getPointTypeOffer,getDestinationById, changeDateFormat, getEventDuration, sortPointTime,sortPointPrice, sortPointDay, getDestinationByTargetName, getNewDateAddOneMinute};

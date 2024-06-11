@@ -1,7 +1,6 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import {TYPES, CITIES} from '../const.js';
+import {TYPES} from '../const.js';
 import {getPointTypeOffer, getDestinationById} from '../utils/point.js';
-
 import he from 'he';
 
 function createTypeItemTemplate(type, id) {
@@ -89,7 +88,9 @@ function createRollUpTemplate () {
 }
 
 function createEditPointFormTemplate(point, dataDestinations, dataOffers, buttonText, createRollUp, isAddPoint) {
-  const {type,basePrice, isDisabled, isSaving, isDeleting} = point;
+
+  const cities = dataDestinations.map((item)=>item.name);
+  const {type, basePrice, isDisabled, isSaving, isDeleting} = point;
   const destinationById = getDestinationById(dataDestinations, point);
 
   return (`<form class="event event--edit" action="#" method="post">
@@ -113,18 +114,18 @@ function createEditPointFormTemplate(point, dataDestinations, dataOffers, button
       <label class="event__label  event__type-output" for="event-destination-${point.id}">
       ${type}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-${point.id}" type="text" name="event-destination" value="${destinationById ? he.encode(destinationById.name) : ''}" list="destination-list-${point.id}">
+      <input class="event__input  event__input--destination" id="event-destination-${point.id}" type="text" name="event-destination" value="${destinationById ? he.encode(destinationById.name) : ''}" list="destination-list-${point.id}" required>
       <datalist id="destination-list-${point.id}">
-      ${CITIES.map((city)=>`<option value="${city}"></option>`).join('')}
+      ${cities.map((city)=>`<option value="${city}"></option>`).join('')}
       </datalist>
     </div>
 
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-${point.id}">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-${point.id}" type="text" name="event-start-time" placeholder ="Select date" value="">
+      <input class="event__input  event__input--time" id="event-start-time-${point.id}" type="text" name="event-start-time" placeholder ="Select date" value="" required>
       &mdash;
       <label class="visually-hidden" for="event-end-time-${point.id}">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-${point.id}" type="text" name="event-end-time"  placeholder ="Select date" value="">
+      <input class="event__input  event__input--time" id="event-end-time-${point.id}" type="text" name="event-end-time"  placeholder ="Select date" value="" required>
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -132,7 +133,7 @@ function createEditPointFormTemplate(point, dataDestinations, dataOffers, button
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-${point.id}" type="number" name="event-price" value="${isAddPoint ? 0 : basePrice}">
+      <input class="event__input  event__input--price" id="event-price-${point.id}" type="number" name="event-price" placeholder="0" value="${isAddPoint ? '' : basePrice}" required>
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
@@ -165,15 +166,9 @@ export default class PointFormView extends AbstractStatefulView {
     this.createRollUp = createRollUp;
 
     this._setState(PointFormView.parsePointToState(point));
-
     this._handleEditFormSubmit = onEditFormSubmit;
     this.element.addEventListener('submit', this._editFormSubmitHandler);
   }
-
-  _editFormSubmitHandler = (evt) => {
-    evt.preventDefault();
-    this._handleEditFormSubmit(PointFormView.parseStateToPoint(this._state));
-  };
 
 
   get template() {
@@ -186,6 +181,10 @@ export default class PointFormView extends AbstractStatefulView {
     );
   }
 
+  _editFormSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._handleEditFormSubmit(PointFormView.parseStateToPoint(this._state));
+  };
 
   static parsePointToState(point) {
     return {...point,

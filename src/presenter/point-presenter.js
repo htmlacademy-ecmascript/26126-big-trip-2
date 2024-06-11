@@ -1,12 +1,10 @@
 import {render, replace, remove} from '../framework/render.js';
 
-import PointView from '../view/point.js';
-import EditPointFormView from '../view/edit-point-form.js';
+import PointView from '../view/point-view.js';
+import EditPointFormView from '../view/edit-point-form-view.js';
 
-import {createRollUpTemplate} from '../view/point-form.js';
-
+import {createRollUpTemplate} from '../view/point-form-view.js';
 import {UserAction, UpdateType} from '../const.js';
-
 import {isPointInPast, isPointInPresent, isPointInFuture} from '../utils/point.js';
 
 const Mode = {
@@ -18,7 +16,6 @@ export default class PointPresenter {
   #pointListContainer = null;
   #handleDataChange = null;
   #handleModeChange = null;
-  #tripInfoComponent = null;
 
   #pointComponent = null;
   #editPointComponent = null;
@@ -28,8 +25,8 @@ export default class PointPresenter {
   #dataDestinations = null;
   #mode = Mode.DEFAULT;
 
-  constructor({pointListContainer, onDataChange, onModeChange}){
-    this.#pointListContainer = pointListContainer;
+  constructor({pointListContainerElement, onDataChange, onModeChange}){
+    this.#pointListContainer = pointListContainerElement;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
@@ -82,18 +79,6 @@ export default class PointPresenter {
     remove(prevPointEditComponent);
   }
 
-  destroy() {
-    remove(this.#pointComponent);
-    remove(this.#editPointComponent);
-  }
-
-  resetView() {
-    if (this.#mode !== Mode.DEFAULT) {
-      this.#editPointComponent.reset(this.#point);
-      this.#replaceEditFormToPoint();
-    }
-  }
-
   setSaving() {
     if (this.#mode === Mode.EDITING) {
       this.#editPointComponent.updateElement({
@@ -129,13 +114,17 @@ export default class PointPresenter {
     this.#editPointComponent.shake(resetFormState);
   }
 
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
+  destroy() {
+    remove(this.#pointComponent);
+    remove(this.#editPointComponent);
+  }
+
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
       this.#editPointComponent.reset(this.#point);
       this.#replaceEditFormToPoint();
     }
-  };
+  }
 
   #replacePointToEditForm(){
     replace(this.#editPointComponent, this.#pointComponent);
@@ -187,6 +176,14 @@ export default class PointPresenter {
       UpdateType.MINOR,
       point,
     );
+  };
+
+  #escKeyDownHandler = (evt) => {
+    if (evt.key === 'Escape') {
+      evt.preventDefault();
+      this.#editPointComponent.reset(this.#point);
+      this.#replaceEditFormToPoint();
+    }
   };
 
 }

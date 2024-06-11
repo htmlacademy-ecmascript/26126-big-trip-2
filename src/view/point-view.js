@@ -70,7 +70,7 @@ export default class PointView extends AbstractView{
     this.#handleFavoriteClick = onFavoriteClick;
 
     this.element.querySelector('.event__rollup-btn')
-      .addEventListener('click', this.#editArrowClick);
+      .addEventListener('click', this.#editArrowClickHandler);
 
     this.element.querySelector('.event__favorite-btn')
       .addEventListener('click', this.#favoriteClickHandler);
@@ -85,7 +85,7 @@ export default class PointView extends AbstractView{
     this.#handleFavoriteClick();
   };
 
-  #editArrowClick = (evt) => {
+  #editArrowClickHandler = (evt) => {
     evt.preventDefault();
     this.#handleEditArrowClick();
   };
