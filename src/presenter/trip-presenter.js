@@ -13,9 +13,9 @@ import InfoTripPresenter from './info-trip-presenter.js';
 
 import SortView from '../view/sort-view.js';
 import PointListView from '../view/point-list-view.js';
-import EmptyListView from '../view/no-point-view.js';
+import EmptyListView from '../view/empty-list-view.js';
 import LoadingView from '../view/loading-view.js';
-import FailedView from '../view/load-failed-view.js';
+import LoadingFailedView from '../view/load-failed-view.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
@@ -33,7 +33,7 @@ export default class TripPresenter {
   #newEventButton = null;
   #pointListComponent = new PointListView();
   #loadingComponent = new LoadingView();
-  #failedComponent = new FailedView();
+  #failedComponent = new LoadingFailedView();
 
   #sortComponent = null;
   #emptyListComponent = null;
@@ -189,6 +189,9 @@ export default class TripPresenter {
   }
 
   #renderInfoTrip() {
+    if(this.points.length === 0) {
+      return;
+    }
     this.#infoTripPresenter = new InfoTripPresenter({
       tripMainElement: this.#tripMain,
     });
@@ -214,10 +217,13 @@ export default class TripPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
     this.#addPointPresenter.destroy();
-    this.#infoTripPresenter.destroy();
+    if(this.#infoTripPresenter){
+      this.#infoTripPresenter.destroy();
+    }
 
     remove(this.#sortComponent);
     remove(this.#emptyListComponent);
+
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
     }
@@ -267,7 +273,9 @@ export default class TripPresenter {
       return;
     }
     if(this.points.length === 0) {
-      this.#renderEmptyList();
+      if(!this.#emptyListComponent){
+        this.#renderEmptyList();
+      }
       return;
     }
     this.#renderPoints(points);

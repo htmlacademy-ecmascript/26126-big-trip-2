@@ -3,7 +3,7 @@ import {render, replace, remove} from '../framework/render.js';
 import PointView from '../view/point-view.js';
 import EditPointFormView from '../view/edit-point-form-view.js';
 
-import {createRollUpTemplate} from '../view/point-form-view.js';
+
 import {UserAction, UpdateType} from '../const.js';
 import {isPointInPast, isPointInPresent, isPointInFuture} from '../utils/point.js';
 
@@ -53,7 +53,6 @@ export default class PointPresenter {
       dataDestinations: this.#dataDestinations,
       dataOffers: this.#dataOffers,
       buttonText: 'Delete',
-      createRollUp: createRollUpTemplate(),
       isAddPoint: false,
 
       onEditFormSubmit: this.#handleFormSubmit,
@@ -167,7 +166,6 @@ export default class PointPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update
     );
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleDeleteClick = (point) => {

@@ -61,33 +61,49 @@ function createOffersSelectorTemplate(dataOffers, point, isAddPoint) {
 
 }
 
-function createDestinationSelectorTemplate(dataDestinations, point) {
-  const destinationById = getDestinationById(dataDestinations, point);
+function createDestinationSelectorTemplate(dataDestinations, point, isAddPoint) {
 
-  return (
-    destinationById ?
+  const destinationById = getDestinationById(dataDestinations, point);
+  if(isAddPoint && !destinationById ||
+    (destinationById.description === ''
+      && destinationById.pictures.length === 0)) {
+    return (
+      ''
+    );
+  }else {
+    return (
       `<section class="event__section  event__section--destination">
-    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-    <p class="event__destination-description">${destinationById.description}</p>
-    <div class="event__photos-container">
-      <div class="event__photos-tape">
-      ${destinationById.pictures.map((item)=>
-      `<img class="event__photo" src=${item.src} alt="Event photo">`).join('')}
-      </div>
-    </div>
-  </section>` : ''
-  );
+      ${destinationById.description ?
+        `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${destinationById.description}</p>` : ''
+      }
+
+      ${destinationById.pictures.length !== 0 ?
+        `<div class="event__photos-container">
+        <div class="event__photos-tape">
+        ${destinationById.pictures.map((item)=>
+        `<img class="event__photo" src=${item.src} alt="Event photo">`).join('')}
+        </div>
+      </div>` : ''
+      }
+
+    </section>`
+    );
+  }
+
 }
 
-function createRollUpTemplate () {
+function createRollUpTemplate (isDisabled) {
   return(
-    `<button class="event__rollup-btn" type="button">
+    `<button class="event__rollup-btn" type="button"
+    ${isDisabled ? 'disabled' : ''}>
     <span class="visually-hidden">Open event</span>
   </button>`
   );
 }
 
-function createEditPointFormTemplate(point, dataDestinations, dataOffers, buttonText, createRollUp, isAddPoint) {
+function createEditPointFormTemplate(point, dataDestinations, dataOffers, buttonText, isAddPoint) {
+  //const reset = document.querySelector('.event__reset-btn');
 
   const cities = dataDestinations.map((item)=>item.name);
   const {type, basePrice, isDisabled, isSaving, isDeleting} = point;
@@ -133,16 +149,19 @@ function createEditPointFormTemplate(point, dataDestinations, dataOffers, button
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-${point.id}" type="number" name="event-price" placeholder="0" value="${isAddPoint ? '' : basePrice}" required>
+      ${isAddPoint ? `<input class="event__input  event__input--price" id="event-price-${point.id}" type="number" min="1" name="event-price" value="${basePrice ? basePrice : 0}" required>` :
+      `<input class="event__input  event__input--price" id="event-price-${point.id}" type="number" min="1" name="event-price" value="${basePrice}" required>`
+    }
+
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
     <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting' : buttonText }</button>
-    ${createRollUp}
+    ${isAddPoint ? '' : createRollUpTemplate(isDisabled)}
   </header>
   <section class="event__details">
   ${createOffersSelectorTemplate(dataOffers, point, isAddPoint)}
-  ${createDestinationSelectorTemplate(dataDestinations, point)}
+  ${createDestinationSelectorTemplate(dataDestinations, point, isAddPoint)}
   </section>
 </form>`);
 }
@@ -153,17 +172,15 @@ export default class PointFormView extends AbstractStatefulView {
   _handleEditFormSubmit = null;
 
   _buttonText = null;
-  createRollUp = null;
 
 
-  constructor({point, dataDestinations, dataOffers, buttonText, createRollUp,isAddPoint, onEditFormSubmit}) {
+  constructor({point, dataDestinations, dataOffers, buttonText, isAddPoint, onEditFormSubmit}) {
     super();
     this._dataOffers = dataOffers;
     this._dataDestinations = dataDestinations;
 
     this._isAddPoint = isAddPoint;
     this._buttonText = buttonText;
-    this.createRollUp = createRollUp;
 
     this._setState(PointFormView.parsePointToState(point));
     this._handleEditFormSubmit = onEditFormSubmit;
@@ -172,7 +189,7 @@ export default class PointFormView extends AbstractStatefulView {
 
 
   get template() {
-    return createEditPointFormTemplate(this._state, this._dataDestinations,this._dataOffers, this._buttonText, this.createRollUp, this._isAddPoint);
+    return createEditPointFormTemplate(this._state, this._dataDestinations,this._dataOffers, this._buttonText,this._isAddPoint);
   }
 
   reset(point) {
@@ -202,8 +219,4 @@ export default class PointFormView extends AbstractStatefulView {
 
     return point;
   }
-
-
 }
-
-export {createRollUpTemplate, createOffersSelectorTemplate, createDestinationSelectorTemplate};

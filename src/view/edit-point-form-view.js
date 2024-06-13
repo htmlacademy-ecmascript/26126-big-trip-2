@@ -18,7 +18,6 @@ export default class EditPointFormView extends PointFormView{
     super({point, dataDestinations, dataOffers,isAddPoint, buttonText, createRollUp, onEditFormSubmit});
 
     this._setState(EditPointFormView.parsePointToState(point));
-
     this._handleEditFormButtonClick = onEditFormButtonClick;
     this.#handleDeleteClick = onDeleteClick;
     this._restoreHandlers();
@@ -100,7 +99,7 @@ export default class EditPointFormView extends PointFormView{
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
-      offers: []
+      offers: [],
     });
   };
 

@@ -6,7 +6,7 @@ function createFailLoadgemplate() {
   );
 }
 
-export default class LoadingView extends AbstractView {
+export default class LoadingFailedView extends AbstractView {
   get template() {
     return createFailLoadgemplate();
   }
