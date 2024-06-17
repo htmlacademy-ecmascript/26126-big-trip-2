@@ -43,8 +43,8 @@ export default class AddPointPresenter {
 
   setSaving() {
     this.#editPointFormComponent.updateElement({
-      isDisabled: true,
       isSaving: true,
+      isDisabled: true,
     });
   }
 

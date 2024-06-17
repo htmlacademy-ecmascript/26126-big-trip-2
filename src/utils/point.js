@@ -26,6 +26,26 @@ const changeDateFormat = (date, dateFormat)=> dayjs(date).format(dateFormat);
 
 const getDifferensInMilliseconds = (dateFrom, dateTo) => dayjs(dateTo).diff(dayjs(dateFrom));
 
+const getLongDuration = (dateTo, dateFrom)=> {
+  const durationInDays =
+    dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).asDays();
+
+  const durationInHours = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).asHours();
+
+  const days = Math.round(durationInDays);
+
+  const restDays = durationInDays - days;
+  const hours = Math.round(restDays * 24);
+
+  const restHours = durationInHours - Math.round(durationInHours);
+  const minutes = Math.round(restHours * 60);
+  if((hours.toString()).length === 1 || (minutes.toString()).length === 1){
+    return `${days}D 0${hours}H 0${minutes}M`;
+  }else {
+    return`${days}D ${hours}H ${minutes}M`;
+  }
+};
+
 const getEventDuration = (dateFrom, dateTo) => {
   const differenceInHours = dayjs(dateTo).diff(dayjs(dateFrom), 'hour');
   let eventDuration;
@@ -35,7 +55,12 @@ const getEventDuration = (dateFrom, dateTo) => {
   } else if(differenceInHours < ONE_DAY_HOURS) {
     eventDuration = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).format('HH[H] mm[M]');
   } else if(differenceInHours >= ONE_DAY_HOURS) {
-    eventDuration = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).format('DD[D] HH[H] mm[M]');
+
+    if(dayjs(dateTo).diff(dayjs(dateFrom), 'day') > 31) {
+      eventDuration = getLongDuration(dateTo, dateFrom);
+    }else{
+      eventDuration = dayjs.duration(dayjs(dateTo).diff(dayjs(dateFrom))).format('DD[D] HH[H] mm[M]');
+    }
   }
   return eventDuration;
 };
@@ -52,6 +77,11 @@ function sortPointTime(pointA, pointB) {
   return durationInHoursB - durationInHoursA;
 }
 
+const getIsoDate = (currentDate)=> {
+  const dateIso = dayjs(currentDate).toISOString();
+  return dateIso;
+};
+
 function sortPointDay(pointA, pointB) {
   return dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 }
@@ -60,6 +90,10 @@ function sortPointPrice(pointA, pointB) {
   return pointB.basePrice - pointA.basePrice;
 }
 
-const getNewDateAddOneMinute = (currentDate)=> new Date(dayjs(currentDate).add(1,'minute'));
+const getNewDateAddOneMinute = (currentDate)=> {
+  const dateIso = dayjs(currentDate).toISOString();
+  return new Date(dayjs(dateIso).add(1,'minute'));
+};
 
-export {isPointInPast, isPointInPresent, isPointInFuture, getPointTypeOffer,getDestinationById, changeDateFormat, getEventDuration, sortPointTime,sortPointPrice, sortPointDay, getDestinationByTargetName, getNewDateAddOneMinute};
+
+export {isPointInPast, isPointInPresent, isPointInFuture, getPointTypeOffer,getDestinationById, changeDateFormat, getEventDuration, sortPointTime,sortPointPrice, sortPointDay, getDestinationByTargetName, getNewDateAddOneMinute, getIsoDate, getDifferensInMilliseconds};

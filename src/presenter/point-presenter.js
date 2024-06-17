@@ -5,11 +5,12 @@ import EditPointFormView from '../view/edit-point-form-view.js';
 
 
 import {UserAction, UpdateType} from '../const.js';
-import {isPointInPast, isPointInPresent, isPointInFuture} from '../utils/point.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
+  SUBMITTING: 'SUBMITTING',
+  RESETING: 'RESETING'
 };
 
 export default class PointPresenter {
@@ -35,10 +36,8 @@ export default class PointPresenter {
     this.#point = point;
     this.#dataOffers = dataOffers;
     this.#dataDestinations = dataDestinations;
-
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#editPointComponent;
-
     this.#pointComponent = new PointView({
       point: this.#point,
       dataOffers: this.#dataOffers,
@@ -81,8 +80,8 @@ export default class PointPresenter {
   setSaving() {
     if (this.#mode === Mode.EDITING) {
       this.#editPointComponent.updateElement({
-        isDisabled: true,
         isSaving: true,
+        isDisabled: true,
       });
     }
   }
@@ -90,8 +89,8 @@ export default class PointPresenter {
   setDeleting() {
     if (this.#mode === Mode.EDITING) {
       this.#editPointComponent.updateElement({
-        isDisabled: true,
         isDeleting: true,
+        isDisabled: true,
       });
     }
   }
@@ -157,13 +156,9 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (update) => {
-    const isMinorUpdate =
-    isPointInPast(this.#point.dateTo) !== isPointInPast(update.dateTo) || isPointInPresent(this.#point.dateFrom, this.#point.dateTo) !== isPointInPresent(this.#point.dateFrom, this.#point.dateTo) ||
-    isPointInFuture(this.#point.dateFrom) !== isPointInFuture(update.dateFrom);
-
     this.#handleDataChange(
       UserAction.UPDATE_POINT,
-      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      UpdateType.MINOR,
       update
     );
   };

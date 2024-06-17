@@ -51,7 +51,7 @@ export default class TripPresenter {
   });
 
 
-  constructor({main, pointsModel, tripMain, filterModel, newEventButton, onAddEventDestroy}) {
+  constructor({main, pointsModel, tripMain, tripEventsContainer, filterModel, newEventButton, onAddEventDestroy}) {
     this.#main = main;
     this.#tripMain = tripMain;
     this.#newEventButton = newEventButton;
@@ -59,7 +59,7 @@ export default class TripPresenter {
     this.#filterModel = filterModel;
     this.#filterContainer = this.#tripMain.querySelector('.trip-controls__filters');
 
-    this.#tripEventsContainer = this.#main.querySelector('.trip-events');
+    this.#tripEventsContainer = tripEventsContainer;
 
     this.#pointsModel = pointsModel;
 
@@ -111,11 +111,14 @@ export default class TripPresenter {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING
     );
+    if(this.#emptyListComponent){
+      remove(this.#emptyListComponent);
+    }
     this.#addPointPresenter.init(this.offers, this.destinations);
   }
 
   #handleViewAction = async (actionType, updateType, update) => {
-    this.#uiBlocker.block();
+    //this.#uiBlocker.block();
     switch(actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointPresenters.get(update.id).setSaving();
@@ -142,7 +145,7 @@ export default class TripPresenter {
         }
         break;
     }
-    this.#uiBlocker.unblock();
+    //this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -202,6 +205,7 @@ export default class TripPresenter {
     this.#emptyListComponent = new EmptyListView({
       filterType: this.#filterType
     });
+
     render(this.#emptyListComponent, this.#tripEventsContainer);
   }
 
@@ -222,7 +226,9 @@ export default class TripPresenter {
     }
 
     remove(this.#sortComponent);
-    remove(this.#emptyListComponent);
+    if(this.#emptyListComponent){
+      remove(this.#emptyListComponent);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
@@ -273,9 +279,7 @@ export default class TripPresenter {
       return;
     }
     if(this.points.length === 0) {
-      if(!this.#emptyListComponent){
-        this.#renderEmptyList();
-      }
+      this.#renderEmptyList();
       return;
     }
     this.#renderPoints(points);
