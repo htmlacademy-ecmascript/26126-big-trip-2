@@ -24,7 +24,6 @@ const EmptyListComponent = new EmptyListView({
 
 
 const tripPresenter = new TripPresenter({
-  main: siteMainElement,
   pointsModel,
   tripMain: tripMainElement,
   tripEventsContainer: tripEventsContainerElement,
@@ -33,7 +32,7 @@ const tripPresenter = new TripPresenter({
   onAddEventDestroy: handleAddPointFormClose
 });
 
-addEventButtonElement.addEventListener('click', handleaddEventButtonClick);
+addEventButtonElement.addEventListener('click', handleAddEventButtonClick);
 
 function handleAddPointFormClose() {
   addEventButtonElement.disabled = false;
@@ -42,7 +41,7 @@ function handleAddPointFormClose() {
   }
 }
 
-function handleaddEventButtonClick() {
+function handleAddEventButtonClick() {
   if(EmptyListComponent){
     remove(EmptyListComponent);
   }

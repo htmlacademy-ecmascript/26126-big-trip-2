@@ -24,7 +24,6 @@ const TimeLimit = {
 
 export default class TripPresenter {
   #pointsModel = null;
-  #main = null;
   #tripMain = null;
   #filterModel = null;
 
@@ -51,8 +50,7 @@ export default class TripPresenter {
   });
 
 
-  constructor({main, pointsModel, tripMain, tripEventsContainer, filterModel, newEventButton, onAddEventDestroy}) {
-    this.#main = main;
+  constructor({pointsModel, tripMain, tripEventsContainer, filterModel, newEventButton, onAddEventDestroy}) {
     this.#tripMain = tripMain;
     this.#newEventButton = newEventButton;
 
@@ -118,7 +116,7 @@ export default class TripPresenter {
   }
 
   #handleViewAction = async (actionType, updateType, update) => {
-    //this.#uiBlocker.block();
+    this.#uiBlocker.block();
     switch(actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointPresenters.get(update.id).setSaving();
@@ -145,7 +143,7 @@ export default class TripPresenter {
         }
         break;
     }
-    //this.#uiBlocker.unblock();
+    this.#uiBlocker.unblock();
   };
 
   #handleModelEvent = (updateType, data) => {
@@ -175,6 +173,22 @@ export default class TripPresenter {
         this.#renderPointList();
         break;
     }
+  };
+
+  #handleModeChange = () => {
+    this.#addPointPresenter.destroy();
+    this.#pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#currentSortType = sortType;
+    this.#clearTripBoard();
+    this.#renderSort();
+    this.#renderInfoTrip();
+    this.#renderPointList();
   };
 
   #renderPoint(point, dataOffers, dataDestinations) {
@@ -234,22 +248,6 @@ export default class TripPresenter {
       this.#currentSortType = SortType.DAY;
     }
   }
-
-  #handleModeChange = () => {
-    this.#addPointPresenter.destroy();
-    this.#pointPresenters.forEach((presenter) => presenter.resetView());
-  };
-
-  #handleSortTypeChange = (sortType) => {
-    if (this.#currentSortType === sortType) {
-      return;
-    }
-    this.#currentSortType = sortType;
-    this.#clearTripBoard();
-    this.#renderSort();
-    this.#renderInfoTrip();
-    this.#renderPointList();
-  };
 
   #renderSort() {
     this.#sortComponent = new SortView({

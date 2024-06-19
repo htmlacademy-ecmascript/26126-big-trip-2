@@ -8,9 +8,7 @@ import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-  SUBMITTING: 'SUBMITTING',
-  RESETING: 'RESETING'
+  EDITING: 'EDITING'
 };
 
 export default class PointPresenter {
@@ -108,7 +106,6 @@ export default class PointPresenter {
         isDeleting: false,
       });
     };
-
     this.#editPointComponent.shake(resetFormState);
   }
 

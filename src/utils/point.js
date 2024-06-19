@@ -10,17 +10,11 @@ dayjs.extend(isSameOrAfter);
 const ONE_HOUR = 1;
 const ONE_DAY_HOURS = 24;
 
-function isPointInPast(endDate) {
-  return endDate && dayjs().isAfter(endDate, 'D');
-}
+const isPointInPast = (endDate)=> endDate && dayjs().isAfter(endDate, 'D');
 
-function isPointInPresent(startDate, endDate) {
-  return dayjs().isSameOrAfter(startDate, 'D') && dayjs().isSameOrBefore(endDate, 'D');
-}
+const isPointInPresent = (startDate, endDate)=> dayjs().isSameOrAfter(startDate, 'D') && dayjs().isSameOrBefore(endDate, 'D');
 
-function isPointInFuture(startDate) {
-  return startDate && dayjs().isBefore(startDate, 'D');
-}
+const isPointInFuture = (startDate) => startDate && dayjs().isBefore(startDate, 'D');
 
 const changeDateFormat = (date, dateFormat)=> dayjs(date).format(dateFormat);
 
@@ -71,24 +65,20 @@ const getDestinationById = (destData, pointMocks) => destData.find((item)=>item.
 
 const getDestinationByTargetName = (destMocks, targetName) => destMocks.find((item)=>item.name === targetName);
 
-function sortPointTime(pointA, pointB) {
+const sortPointTime = (pointA, pointB) => {
   const durationInHoursA = getDifferensInMilliseconds(pointA.dateFrom, pointA.dateTo);
   const durationInHoursB = getDifferensInMilliseconds(pointB.dateFrom, pointB.dateTo);
   return durationInHoursB - durationInHoursA;
-}
+};
 
 const getIsoDate = (currentDate)=> {
   const dateIso = dayjs(currentDate).toISOString();
   return dateIso;
 };
 
-function sortPointDay(pointA, pointB) {
-  return dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
-}
+const sortPointDay = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 
-function sortPointPrice(pointA, pointB) {
-  return pointB.basePrice - pointA.basePrice;
-}
+const sortPointPrice = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
 
 const getNewDateAddOneMinute = (currentDate)=> {
   const dateIso = dayjs(currentDate).toISOString();
