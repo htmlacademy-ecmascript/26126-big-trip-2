@@ -18,7 +18,6 @@ export default class EditPointFormView extends PointFormView{
     super({point, dataDestinations, dataOffers,isAddPoint, buttonText, createRollUp, onEditFormSubmit});
 
     this._setState(EditPointFormView.parsePointToState(point));
-
     this._handleEditFormButtonClick = onEditFormButtonClick;
     this.#handleDeleteClick = onDeleteClick;
     this._restoreHandlers();
@@ -52,25 +51,12 @@ export default class EditPointFormView extends PointFormView{
     this.#setDatepicker();
   }
 
-  removeElement() {
-    super.removeElement();
-
-    if (this.#datepickerFrom) {
-      this.#datepickerFrom.destroy();
-      this.#datepickerFrom = null;
-    }
-    if (this.#datepickerTo) {
-      this.#datepickerTo.destroy();
-      this.#datepickerTo = null;
-    }
-  }
-
   #setDatepicker() {
     this.#datepickerFrom = flatpickr(
       this.element.querySelector('[name="event-start-time"]'),
       {
-        dateFormat: DATE_FORMAT_FLATPICKR,
         enableTime: true,
+        dateFormat: DATE_FORMAT_FLATPICKR,
         defaultDate: this._state.dateFrom,
         onChange: this.#dateChangeHandler,
         allowInput:true
@@ -83,7 +69,7 @@ export default class EditPointFormView extends PointFormView{
       {
         dateFormat: DATE_FORMAT_FLATPICKR,
         defaultDate: this._state.dateTo,
-        minDate: this._state.dateFrom ? getNewDateAddOneMinute(this._state.dateFrom) : this._state.dateFrom,
+        minDate: this._state.dateFrom ? getNewDateAddOneMinute(this._state.dateFrom) : this._state.dateTo,
         onChange: this.#dateToChangeHandler,
         enableTime: true,
         allowInput: true,
@@ -100,7 +86,7 @@ export default class EditPointFormView extends PointFormView{
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
-      offers: []
+      offers: [],
     });
   };
 
@@ -127,6 +113,7 @@ export default class EditPointFormView extends PointFormView{
       basePrice: Number(evt.target.value)
     });
   };
+
 
   #dateChangeHandler = ([userDateFrom]) => {
     this.updateElement({
